@@ -67,7 +67,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
     return (
         <>
-            <div className="text-5xl">Test pagexx</div>
+            <div className="text-5xl">Test page</div>
             <div className="mb-3">
                 <Button>Click me button</Button>
             </div>

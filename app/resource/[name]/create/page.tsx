@@ -1,3 +1,4 @@
+import { Form } from "@/components/form";
 import { Button } from "@/components/ui/button"
 import prisma from '@/lib/db'
 
@@ -48,7 +49,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
     const args = {
         data
     };
-    const d = await prismaDb(resource, args, 'create');
+    //const d = await prismaDb(resource, args, 'create');
 
     const form = {
         [Entity.user]: [
@@ -63,16 +64,8 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
     return (
         <>
-            <div className="text-5xl">Test page</div>
-            <div className="mb-3">
-                <Button>Click me button</Button>
-            </div>
-
-
-            {form[resource].map((c: any) => <div key={c.name}>
-                {c.name}: 
-            </div>)}
-
+            <div className="text-5xl">Create page</div>
+            <Form />
         </>
     );
 }
