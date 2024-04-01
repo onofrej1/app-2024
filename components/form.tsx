@@ -9,10 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from './ui/button';
 import { ErrorMessage } from '@hookform/error-message';
 import { useEffect } from 'react';
+import { FormField } from '@/resources/resources.types';
 
-enum Entity {
-    user = "user",
-    post = "post"
+export interface DefaultFormData {
+    [key: string]: any;
 }
 
 export interface FormValues {
@@ -20,26 +20,22 @@ export interface FormValues {
     name: string;
 }
 
-export function Form() {
-    const resource = Entity.user;
-    const { register, formState: { isValid, errors }, setError } = useForm<FormSchemaInputType>({
+interface FormProps {
+    fields: FormField[];
+    data: DefaultFormData;
+}
+
+export default function Form({ fields, data }: FormProps) {
+    //useForm<FormSchemaInputType>
+    const { register, formState: { isValid, errors }, setError } = useForm({
         mode: "onSubmit",
         resolver: zodResolver(formSchema),
+        defaultValues: data,
     });
-    const [state, formAction] = useFormState<State, FormData>(saveFormData, null);
-    const { pending } = useFormStatus();
 
-    const form = {
-        [Entity.user]: [
-            { name: 'id', header: 'Id' },
-            { name: 'email', header: 'Email' },
-            { name: 'name', header: 'Name' },
-        ],
-        [Entity.post]: [
-            { name: 'id', header: 'Id' },
-            { name: 'content', header: 'Content' },
-        ]
-    }
+    const saveData = saveFormData.bind(null, fields);
+    const [state, formAction] = useFormState<State, FormData>(saveData, null);
+    const { pending } = useFormStatus();
 
     useEffect(() => {
         if (!state) {
@@ -59,28 +55,23 @@ export function Form() {
 
     return (
         <>
-
             <form action={formAction}>
-
-                {form[resource].map((c: any) => <div key={c.name}>
-
-                    <Input type="text" {...register(c.name)} placeholder={c.header} />
+                {fields.map((field) => <div key={field.name} className="mb-2">
+                    <Input type="text" {...register(field.name)} placeholder={field.label} />
                     <ErrorMessage
                         errors={errors}
-                        name={c.name}
+                        name={field.name}
                     //render={({ message }) => <p>{message}</p>}
                     />
                 </div>)}
 
-
-                {pending || !isValid}
-                <Button type="submit" >Send</Button>
+                {/*pending || !isValid */}
+                <Button type="submit" className="mt-3" >Save</Button>
 
                 <p className="mt-5">
-                    <>{state && JSON.stringify(state)}</>
+                    <>{/* state && JSON.stringify(state) */}</>
                 </p>
             </form>
-
         </>
     )
 }

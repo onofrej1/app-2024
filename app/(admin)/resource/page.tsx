@@ -1,3 +1,4 @@
+import TableUI from "@/components/table";
 import { Button } from "@/components/ui/button"
 import prisma from '@/lib/db'
 
@@ -30,10 +31,7 @@ export default async function Test() {
 
     return (
         <>
-            <div className="text-5xl">Test pagexx</div>
-            <div className="mb-3">
-                <Button>Click me button</Button>
-            </div>
+            <TableUI />
             {allUsers.map(u => <div key={u.id}>
                 {u.name}
             </div>)}
