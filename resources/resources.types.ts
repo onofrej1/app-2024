@@ -4,7 +4,7 @@ import { z } from "zod";
 
 interface SelectOption {
     text: string;
-    value: string | number | null | undefined;
+    value: string | number;
   }
 
 interface FormField {
@@ -12,12 +12,17 @@ interface FormField {
     name: string;
     label: string;
     type: string;
+    resource?: PrismaModel;
+    fk?: string;
+    relation?: string;
+    textField?: string;
 
     // optional props
+    options?: SelectOption[];
     /*value?: string;
     helperText?: string;
     rows?: number;    
-    options?: SelectOption[];
+    
     render?: any;
     color?: string;
     inputType?: string;
@@ -60,7 +65,8 @@ type Resource = {
 
 enum PrismaModel {
     "user" = "user",
-    "post" = "post"
+    "post" = "post",
+    "category" = "category"
 }
 
 export { PrismaModel };

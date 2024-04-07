@@ -17,5 +17,8 @@ export default prisma
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
 
 export async function prismaQuery(resource: PrismaModel, operation: any, args: any) {
-  return (prisma[resource][operation] as any)(args);
+  if (args) {
+    return (prisma[resource][operation] as any)(args);
+  }
+  return (prisma[resource][operation] as any)();
 }

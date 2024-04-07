@@ -11,18 +11,33 @@ interface ResourceProps {
     searchParams: { [key: string]: string }
 }
 
-export default async function EditResource({ params }: ResourceProps) {
+export default async function CreateResource({ params }: ResourceProps) {
     const { name: resourceName, id } = params;
     const resource = resources.find(r => r.resource === resourceName);
     if (!resource) {
         throw new Error(`Resource ${resourceName} not found !`);
     }
+    const form = resource.form;
+
+    for (const field of form) {
+        if (field.type === 'fk' && field.resource) {
+            const d = await prismaQuery(field.resource, 'findMany', null);
+            field['options'] = d.map((v: any) => ({ value: v.id, text: v[field.textField!]}));
+        }
+    }
 
     const onSave = async (data: any) => {
         "use server"
+        const f = resource.form;
+        f.forEach(field => {
+            if (field.type === 'fk') {
+                data[field.name] = Number(data[field.name]);
+            }
+        });
         const args: any = {
             data
-        }
+        };
+
         await prismaQuery(resource.model, 'create', args);
     }
 

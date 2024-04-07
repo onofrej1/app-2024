@@ -9,7 +9,9 @@ const CreateEditUser = z.object({
 const CreateEditPost = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(4),
-  content: z.string().min(1)
+  content: z.string().min(1),
+  //author: z.string(),
+  authorId: z.string()
 });
 
 export enum FormSchema {

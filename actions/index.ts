@@ -1,7 +1,6 @@
 "use server";
 
-import { prismaQuery } from "@/lib/db";
-import { FormField, PrismaModel } from "@/resources/resources.types";
+import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
 import { ZodError, z } from "zod";
 
@@ -31,10 +30,12 @@ export async function saveFormData(
   try {
     const data: { [key: string]: any } = {};
     fields.forEach((field) => (data[field.name] = formData.get(field.name)));
-    console.log(data);
+    //console.log(data);
+
     const validation = rules[formSchema];
     const parsedData = validation.parse(data);
-    
+    console.log('parsed data:');
+    console.log(parsedData);
     action(parsedData);
 
     return {

@@ -1,16 +1,23 @@
 "use client";
 
-import { FieldPath, useForm } from 'react-hook-form';
+import { Controller, FieldPath, useForm } from 'react-hook-form';
 import { Input } from "@/components/ui/input"
 import { State, saveFormData } from '@/actions';
 import { useFormState, useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { ErrorMessage } from '@hookform/error-message';
 import { useEffect } from 'react';
 import { FormField } from '@/resources/resources.types';
 import { FormSchema } from '@/validation';
 import rules from '@/validation';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export interface DefaultFormData {
     [key: string]: any;
@@ -31,8 +38,10 @@ interface FormProps {
 export default function Form({ fields, formSchema, data, action }: FormProps) {
     //useForm<FormSchemaInputType>
     const validation = rules[formSchema];
-    console.log(validation);
-    const { register, formState: { isValid, errors }, setError } = useForm({
+    //console.log(validation);
+    console.log('aaa');
+    console.log(data);
+    const { register, formState: { isValid, errors },getValues, setError, control, reset } = useForm({
         mode: "onSubmit",
         resolver: zodResolver(validation),
         defaultValues: data,
@@ -41,7 +50,9 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
     const saveData = saveFormData.bind(null, fields, formSchema, action);
     const [state, formAction] = useFormState<State, FormData>(saveData, null);
     const { pending } = useFormStatus();
-    console.log(state);
+    //console.log(state);
+    //console.log(pending);
+    console.log(isValid);
 
     useEffect(() => {
         if (!state) {
@@ -62,6 +73,8 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
         }
     }, [state, setError]);
 
+    console.log(getValues());
+
     return (
         <>
             <form action={formAction}>
@@ -76,12 +89,56 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                     </>
                     }
 
+                    {['select', 'fk'].includes(field.type) &&
+                        <Controller
+                            control={control}
+                            name={field.name}
+                            render={({
+                                field: { onChange, value, name },
+                                fieldState: { invalid, isTouched, isDirty, error },
+                                formState,
+                            }) => (
+                                <Select
+                                    name={name}
+                                    onValueChange={onChange}
+                                    defaultValue={value?.toString()}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={field.label} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {field.options && field.options?.map(option =>
+                                            <SelectItem
+                                                key={option.value}
+                                                value={option.value.toString()}>{option.text} {name}</SelectItem>
+                                        )}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                    }
+
+                    {field.type === 'selectx' &&
+                        <Select {...register(field.name)}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder={field.label} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {field.options?.map(option =>
+                                    <SelectItem
+                                        key={option.value}
+                                        value={option.value.toString()}>{option.text}</SelectItem>
+                                )}
+                            </SelectContent>
+                        </Select>
+                    }
+
                 </div>
                 )}
 
                 {/*pending || !isValid */}
                 <Button type="submit" className="mt-3" >Save</Button>
-            </form>
+            </form >
         </>
     )
 }
