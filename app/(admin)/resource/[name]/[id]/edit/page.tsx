@@ -1,7 +1,6 @@
 import Form from "@/components/form";
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import prisma, { prismaQuery } from '@/lib/db'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { prismaQuery } from '@/lib/db'
 import { resources } from "@/resources";
 
 interface ResourceProps {
@@ -12,10 +11,7 @@ interface ResourceProps {
     searchParams: { [key: string]: string }
 }
 
-export default async function EditResource({ params, searchParams }: ResourceProps) {
-    console.log(searchParams);
-    const { page, skip, ...where } = searchParams;
-
+export default async function EditResource({ params }: ResourceProps) {
     const { name: resourceName, id } = params;
     const resource = resources.find(r => r.resource === resourceName);
     if (!resource) {
@@ -23,12 +19,18 @@ export default async function EditResource({ params, searchParams }: ResourcePro
     }
     const args = { where: { id: Number(id) } };
     const data = await prismaQuery(resource.model, 'findUnique', args);
-    console.log(data);
-    //const data = { title: 'article', content: '123', authorId: 1 };
-    /*const args = {
-        data
-    };*/
-    //const d = await prismaDb(resource, args, 'create');
+
+    const form = [{ name: 'id', type: 'hidden', label: 'Id' }, ...resource.form];
+
+    const onSave = async (parsedData: any) => {
+        "use server"
+        const { id, ...data } = parsedData;
+        const args: any = {
+            data,
+            where: { id: Number(id) }
+        }
+        await prismaQuery(resource.model, 'update', args);
+    }
 
     return (
         <>
@@ -38,10 +40,14 @@ export default async function EditResource({ params, searchParams }: ResourcePro
                     {/*<CardDescription>Card Description</CardDescription>*/}
                 </CardHeader>
                 <CardContent>
-                    <Form fields={resource.form} data={data} />
+                    <Form
+                        fields={form}
+                        formSchema={resource.rules}
+                        data={data}
+                        action={onSave}
+                    />
                 </CardContent>
             </Card>
-           
         </>
     );
 }

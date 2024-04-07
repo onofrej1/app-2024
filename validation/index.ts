@@ -1,10 +1,27 @@
 import { z } from "zod";
 
-export const formSchema = z.object({
-    //id: z.number(),
-    name: z.string().trim().min(4),
-    email: z.string().min(1)
-  });
+const CreateEditUser = z.object({
+  id: z.string().optional(),
+  name: z.string().trim().min(4),
+  email: z.string().min(1)
+});
 
-export type FormSchemaInputType = z.input<typeof formSchema>;
-export type FormSchemaOutputType = z.output<typeof formSchema>;
+const CreateEditPost = z.object({
+  id: z.string().optional(),
+  title: z.string().trim().min(4),
+  content: z.string().min(1)
+});
+
+export enum FormSchema {
+  'CreateEditUser' = 'CreateEditUser',
+  'CreateEditPost' = 'CreateEditPost'
+}
+
+const rules = {
+  CreateEditUser,
+  CreateEditPost
+};
+export default rules;
+
+//export type FormSchemaInputType = z.input<typeof formSchema>;
+//export type FormSchemaOutputType = z.output<typeof formSchema>;

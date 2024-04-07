@@ -1,4 +1,5 @@
 import { PrismaModel, Resource } from '@/resources/resources.types';
+import { FormSchema } from '@/validation';
 
 /*const rules = object({
   employeeId: string().required(),
@@ -9,6 +10,7 @@ const post: Resource = {
     name_plural: 'Posts',
     model: PrismaModel.post,
     resource: 'posts',
+    rules: FormSchema.CreateEditPost,
     menuIcon: '',
     //relations: ['posts'],
     //rules,

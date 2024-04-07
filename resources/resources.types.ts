@@ -1,4 +1,6 @@
 import { TableHeader } from "@/components/table";
+import { FormSchema } from "@/validation";
+import { z } from "zod";
 
 interface SelectOption {
     text: string;
@@ -47,6 +49,7 @@ type Resource = {
     relations?: string[];
     //search?: string[];
     //rules?: ObjectSchema<any>;
+    rules: FormSchema,
     menuIcon: string;
     form: FormField[];
     list: TableHeader[];

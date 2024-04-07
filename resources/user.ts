@@ -1,8 +1,16 @@
 import { PrismaModel, Resource } from '@/resources/resources.types';
+import { FormSchema } from '@/validation';
 
 /*const rules = object({
   employeeId: string().required(),
 });*/
+import { z } from "zod";
+
+export const formSchema = z.object({
+    //id: z.number(),
+    name: z.string().trim().min(4),
+    email: z.string().min(1)
+  });
 
 const user: Resource = {
     name: 'User',
@@ -11,6 +19,7 @@ const user: Resource = {
     resource: 'users',
     menuIcon: '',
     //relations: ['posts'],
+    rules: FormSchema.CreateEditUser,
     //rules,
     /*filter: [
       { name: 'name', type: 'text', label: 'Name' },
