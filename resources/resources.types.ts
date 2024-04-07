@@ -3,7 +3,7 @@ import { FormSchema } from "@/validation";
 import { z } from "zod";
 
 interface SelectOption {
-    text: string;
+    label: string;
     value: string | number;
   }
 

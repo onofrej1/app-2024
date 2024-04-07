@@ -17,7 +17,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { default as ReactSelect } from 'react-select';
 
 export interface DefaultFormData {
     [key: string]: any;
@@ -41,9 +42,9 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
     //console.log(validation);
     console.log('aaa');
     console.log(data);
-    const { register, formState: { isValid, errors },getValues, setError, control, reset } = useForm({
+    const { register, formState: { isValid, errors }, getValues, setError, control, reset } = useForm({
         mode: "onSubmit",
-        resolver: zodResolver(validation),
+        //resolver: zodResolver(validation),
         defaultValues: data,
     });
 
@@ -110,7 +111,7 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                                         {field.options && field.options?.map(option =>
                                             <SelectItem
                                                 key={option.value}
-                                                value={option.value.toString()}>{option.text} {name}</SelectItem>
+                                                value={option.value.toString()}>{option.label} {name}</SelectItem>
                                         )}
                                     </SelectContent>
                                 </Select>
@@ -118,19 +119,36 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                         />
                     }
 
-                    {field.type === 'selectx' &&
-                        <Select {...register(field.name)}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder={field.label} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {field.options?.map(option =>
-                                    <SelectItem
-                                        key={option.value}
-                                        value={option.value.toString()}>{option.text}</SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
+                    {['m2m'].includes(field.type) &&
+                        <Controller
+                            control={control}
+                            name={field.name}
+                            render={({
+                                field: { onChange, value, name, ref },
+                                fieldState: { invalid, isTouched, isDirty, error },
+                                formState,
+                            }) => (
+                                <div>
+                                    value: {JSON.stringify(value)}
+                                <ReactSelect
+                                    defaultValue={value ? value.map((v: any) => ({ value: Number(v.id), label: v[field.textField!]})) : []}
+                                    //value={value}
+                                    isMulti={true}
+                                    onChange={(e => {
+                                        console.log('ccc');
+                                        console.log(e);
+                                        onChange(e);
+                                        //onChange(e.map(t => t.value));
+                                    })}
+                                    ref={ref}
+                                    name={name}
+                                    options={field.options}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                />
+                                </div>
+                            )}
+                        />
                     }
 
                 </div>

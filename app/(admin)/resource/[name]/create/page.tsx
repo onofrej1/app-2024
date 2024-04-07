@@ -22,7 +22,7 @@ export default async function CreateResource({ params }: ResourceProps) {
     for (const field of form) {
         if (field.type === 'fk' && field.resource) {
             const d = await prismaQuery(field.resource, 'findMany', null);
-            field['options'] = d.map((v: any) => ({ value: v.id, text: v[field.textField!]}));
+            field['options'] = d.map((v: any) => ({ value: v.id, label: v[field.textField!]}));
         }
     }
 

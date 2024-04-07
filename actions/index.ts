@@ -29,7 +29,14 @@ export async function saveFormData(
 ): Promise<State> {
   try {
     const data: { [key: string]: any } = {};
-    fields.forEach((field) => (data[field.name] = formData.get(field.name)));
+    fields.forEach((field) => {
+      if (field.type === 'm2m') {
+        data[field.name] = formData.getAll(field.name);
+        console.log(data[field.name]);
+      } else {
+        data[field.name] = formData.get(field.name);
+      }
+    });
     //console.log(data);
 
     const validation = rules[formSchema];
