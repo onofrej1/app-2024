@@ -11,18 +11,12 @@ const CreateEditCategory = z.object({
   name: z.string().trim().min(4)
 });
 
-const SelectOption = z.object({
-  value: z.string(),
-  label: z.string()
-});
-
 const CreateEditPost = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(4),
   content: z.string().min(1),
-  //author: z.string(),
-  authorId: z.string(),
-  categories: z.array(z.string()), // z.array(z.string())
+  authorId: z.coerce.number(),
+  categories: z.array(z.coerce.number()),
 });
 
 export enum FormSchema {

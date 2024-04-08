@@ -2,7 +2,7 @@
 
 import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
-import { ZodError, z } from "zod";
+import { ZodError } from "zod";
 
 export type State =
   | {
@@ -37,12 +37,9 @@ export async function saveFormData(
         data[field.name] = formData.get(field.name);
       }
     });
-    //console.log(data);
 
     const validation = rules[formSchema];
     const parsedData = validation.parse(data);
-    console.log('parsed data:');
-    console.log(parsedData);
     action(parsedData);
 
     return {

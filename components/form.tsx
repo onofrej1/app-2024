@@ -39,12 +39,10 @@ interface FormProps {
 export default function Form({ fields, formSchema, data, action }: FormProps) {
     //useForm<FormSchemaInputType>
     const validation = rules[formSchema];
-    //console.log(validation);
-    console.log('aaa');
-    console.log(data);
+
     const { register, formState: { isValid, errors }, getValues, setError, control, reset } = useForm({
         mode: "onSubmit",
-        //resolver: zodResolver(validation),
+        resolver: zodResolver(validation),
         defaultValues: data,
     });
 
@@ -96,8 +94,6 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                             name={field.name}
                             render={({
                                 field: { onChange, value, name },
-                                fieldState: { invalid, isTouched, isDirty, error },
-                                formState,
                             }) => (
                                 <Select
                                     name={name}
@@ -125,29 +121,26 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                             name={field.name}
                             render={({
                                 field: { onChange, value, name, ref },
-                                fieldState: { invalid, isTouched, isDirty, error },
-                                formState,
-                            }) => (
-                                <div>
-                                    value: {JSON.stringify(value)}
-                                <ReactSelect
-                                    defaultValue={value ? value.map((v: any) => ({ value: Number(v.id), label: v[field.textField!]})) : []}
-                                    //value={value}
-                                    isMulti={true}
-                                    onChange={(e => {
-                                        console.log('ccc');
-                                        console.log(e);
-                                        onChange(e);
-                                        //onChange(e.map(t => t.value));
-                                    })}
-                                    ref={ref}
-                                    name={name}
-                                    options={field.options}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                />
-                                </div>
-                            )}
+                            }) => {
+                                const selectValue = value ? value.map((v: any) => ({ value: Number(v.value || v.id), label: v.label || v[field.textField!] })) : [];
+                                return (
+                                    <>
+                                        <ReactSelect
+                                            defaultValue={selectValue}
+                                            value={selectValue}
+                                            isMulti={true}
+                                            onChange={onChange}
+                                            ref={ref}
+                                            instanceId={field.name}
+                                            name={name}
+                                            options={field.options}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                        />
+                                    </>
+                                )
+                            }
+                            }
                         />
                     }
 

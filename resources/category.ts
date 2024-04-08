@@ -7,13 +7,7 @@ const category: Resource = {
     model: PrismaModel.category,
     resource: 'categories',
     menuIcon: '',
-    //relations: ['posts'],
-    rules: FormSchema.CreateEditCategory,
-    //rules,
-    /*filter: [
-      { name: 'name', type: 'text', label: 'Name' },
-      { name: 'email', type: 'text', label: 'Email' },
-    ],*/
+    rules: FormSchema.CreateEditCategory,    
     form: [
         { name: 'name', type: 'text', label: 'Name' },
     ],

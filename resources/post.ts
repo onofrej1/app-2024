@@ -24,7 +24,7 @@ const post: Resource = {
     {
       name: 'authorId', 
       type: 'fk',
-      //relation: 'author',
+      relation: 'author',
       label: 'Author', 
       resource: PrismaModel.user,
       textField: 'name'
@@ -32,7 +32,6 @@ const post: Resource = {
     {
       name: 'categories', 
       type: 'm2m',
-      //relation: 'author',
       label: 'Categories',
       resource: PrismaModel.category,
       textField: 'name'

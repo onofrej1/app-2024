@@ -12,7 +12,7 @@ interface ResourceProps {
 }
 
 export default async function CreateResource({ params }: ResourceProps) {
-    const { name: resourceName, id } = params;
+    const { name: resourceName } = params;
     const resource = resources.find(r => r.resource === resourceName);
     if (!resource) {
         throw new Error(`Resource ${resourceName} not found !`);
@@ -20,9 +20,9 @@ export default async function CreateResource({ params }: ResourceProps) {
     const form = resource.form;
 
     for (const field of form) {
-        if (field.type === 'fk' && field.resource) {
+        if (['fk', 'm2m'].includes(field.type) && field.resource) {
             const d = await prismaQuery(field.resource, 'findMany', null);
-            field['options'] = d.map((v: any) => ({ value: v.id, label: v[field.textField!]}));
+            field['options'] = d.map((v: any) => ({ value: v.id, label: v[field.textField!] }));
         }
     }
 
@@ -31,7 +31,13 @@ export default async function CreateResource({ params }: ResourceProps) {
         const f = resource.form;
         f.forEach(field => {
             if (field.type === 'fk') {
-                data[field.name] = Number(data[field.name]);
+                data[field.relation!] = { connect: { id: Number(data[field.name]) }};
+                delete data[field.name!];
+            }
+
+            if (field.type === 'm2m') {
+                const values = data[field.name].map((v: any) => ({ id: Number(v) }));
+                data[field.name] = { connect: values };
             }
         });
         const args: any = {
