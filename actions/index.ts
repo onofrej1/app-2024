@@ -32,7 +32,6 @@ export async function saveFormData(
     fields.forEach((field) => {
       if (field.type === 'm2m') {
         data[field.name] = formData.getAll(field.name);
-        console.log(data[field.name]);
       } else {
         data[field.name] = formData.get(field.name);
       }
