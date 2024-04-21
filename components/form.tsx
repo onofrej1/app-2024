@@ -34,9 +34,10 @@ interface FormProps {
     formSchema: FormSchema,
     data: DefaultFormData;
     action: (data: any) => any;
+    onSuccess: (data: any) => any;
 }
 
-export default function Form({ fields, formSchema, data, action }: FormProps) {
+export default function Form({ fields, formSchema, data, action, onSuccess }: FormProps) {
     //useForm<FormSchemaInputType>
     const validation = rules[formSchema];
 
@@ -46,12 +47,9 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
         defaultValues: data,
     });
 
-    const saveData = saveFormData.bind(null, fields, formSchema, action);
+    const saveData = saveFormData.bind(null, fields, formSchema, action, onSuccess);
     const [state, formAction] = useFormState<State, FormData>(saveData, null);
     const { pending } = useFormStatus();
-    //console.log(state);
-    //console.log(pending);
-    console.log(isValid);
 
     useEffect(() => {
         if (!state) {
@@ -68,7 +66,7 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
             alert(state.message);
         }
         if (state.status === "success") {
-            alert(state.message);
+            //alert(state.message);
         }
     }, [state, setError]);
 

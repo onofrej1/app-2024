@@ -4,46 +4,11 @@
 // importing necessary functions
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image";
-import axios from 'axios';
 
 export default function Home() {
   // extracting data from usesession as session
   const { data: session } = useSession();
   console.log(session);
-
-  const registerUser = async (e: any) => {
-    const data = {
-      email: '',
-      password: '',
-      name: ''
-    };
-    e.preventDefault()
-    
-    axios.post('/api/register', data)
-            .then(() => console.log('User has been registered!'))
-            .catch(() => console.log('Something went wrong!'))
-  };
-
-  const loginUser = async (e: any) => {
-    const data = {
-      email: '',
-      password: ''
-    };
-    e.preventDefault()
-    signIn('credentials',
-      {
-        ...data, redirect: false
-      })
-      .then((callback) => {
-        if (callback?.error) {
-          //toast.error(callback.error)
-        }
-
-        if (callback?.ok && !callback?.error) {
-          //toast.success('Logged in successfully!')
-        }
-      })
-  };
 
   // checking if sessions exists
   if (session) {
@@ -51,12 +16,12 @@ export default function Home() {
     return (
       <div className="w-full h-screen flex flex-col justify-center items-center">
         <div className="w-44 h-44 relative mb-4">
-          <Image
+          {session.user?.image && <Image
             src={session.user?.image as string}
             fill
             alt=""
             className="object-cover rounded-full"
-          />
+          />}
         </div>
         <p className="text-2xl mb-2">Welcome <span className="font-bold">{session.user?.name}</span>. Signed In As</p>
         <p className="font-bold mb-4">{session.user?.email}</p>
@@ -69,10 +34,8 @@ export default function Home() {
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <p className="text-2xl mb-2">Not Signed In</p>
-      <button className="bg-blue-600 py-2 px-6 rounded-md mb-2" onClick={(e) => registerUser(e)}>Register</button>
-      <button className="bg-blue-600 py-2 px-6 rounded-md mb-2" onClick={(e) => loginUser(e)}>Sign in with credentials</button>
       <button className="bg-blue-600 py-2 px-6 rounded-md mb-2" onClick={() => signIn('google')}>Sign in with google</button>
-      <button className="bg-none border-gray-300 border py-2 px-6 rounded-md mb-2" onClick={() => signIn('github')}>Sign in with github</button>
+      <button className="bg-none border-gray-300 border py-2 px-6 rounded-md mb-2" onClick={() => signIn('credentials')}>Sign in with github</button>
     </div>
   )
 

@@ -1,4 +1,3 @@
-import prisma from "@/lib/db";
 import NextAuth from "next-auth"
 import bcrypt from 'bcrypt'
 
@@ -7,7 +6,20 @@ import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 
+import { Adapter } from 'next-auth/adapters'
+
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import { PrismaClient } from "@prisma/client"
+import prisma from "@/lib/db";
+import { signIn } from "next-auth/react";
+ 
+//const prisma = new PrismaClient()
+
 const handler = NextAuth({
+    adapter: PrismaAdapter(prisma) as Adapter,
+    pages: {
+        signIn: '/login',
+    },
     providers: [
         /*GithubProvider({
             clientId: process.env.GITHUB_ID as string,
@@ -23,9 +35,9 @@ const handler = NextAuth({
                 email: { label: "Email", type: "text", placeholder: "jsmith" },
                 password: { label: "Password", type: "password" },
                 username: { label: "Username", type: "text", placeholder: "John Smith" },
-            },
+            },            
             async authorize(credentials, req) {
-
+                console.log('authorize');
                 // check to see if email and password is there
                 if (!credentials || !credentials.email || !credentials.password) {
                     throw new Error('Please enter an email and password')
@@ -51,7 +63,7 @@ const handler = NextAuth({
                     throw new Error('Incorrect password')
                 }
 
-                return { ...user, id: user.id.toString() };
+                return user;
             },
         }),
     ],
@@ -59,6 +71,7 @@ const handler = NextAuth({
     session: {
         strategy: "jwt",
     },
+    //adapter: 'prisma'
 });
 
 export { handler as GET, handler as POST }

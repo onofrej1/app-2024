@@ -6,6 +6,18 @@ const CreateEditUser = z.object({
   email: z.string().min(1)
 });
 
+const RegisterUser = z.object({
+  id: z.string().optional(),
+  name: z.string().trim().min(4),
+  email: z.string().min(1),
+  password: z.string().min(1)
+});
+
+const LoginUser = z.object({  
+  email: z.string().min(1),
+  password: z.string().min(1)
+});
+
 const CreateEditCategory = z.object({
   id: z.string().optional(),
   name: z.string().trim().min(4)
@@ -21,6 +33,8 @@ const CreateEditPost = z.object({
 
 export enum FormSchema {
   'CreateEditUser' = 'CreateEditUser',
+  'RegisterUser' = 'RegisterUser',
+  'LoginUser' = 'LoginUser',
   'CreateEditPost' = 'CreateEditPost',
   'CreateEditCategory' = 'CreateEditCategory'
 }
@@ -28,7 +42,9 @@ export enum FormSchema {
 const rules = {
   CreateEditUser,
   CreateEditPost,
-  CreateEditCategory
+  CreateEditCategory,
+  RegisterUser,
+  LoginUser
 };
 export default rules;
 

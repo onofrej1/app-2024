@@ -26,7 +26,7 @@ export default async function Test() {
         },
     });
 
-    console.log(allUsers);
+    //console.log(allUsers);
 
     return (
         <>

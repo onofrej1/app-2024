@@ -1,8 +1,10 @@
 "use server";
-
+import prisma from "@/lib/db";
 import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
 import { ZodError } from "zod";
+import bcrypt from 'bcrypt';
+import { redirect } from 'next/navigation';
 
 export type State =
   | {
@@ -19,11 +21,11 @@ export type State =
   }
   | null;
 
-export async function saveFormData(
-  //resource: PrismaModel, 
-  fields: FormField[], 
+export async function saveFormData(  
+  fields: FormField[],
   formSchema: FormSchema,
   action: (data: any) => any,
+  onSuccess: (data: any) => any,
   prevState: State | null,
   formData: FormData
 ): Promise<State> {
@@ -41,13 +43,17 @@ export async function saveFormData(
     const parsedData = validation.parse(data);
     action(parsedData);
 
+    if (onSuccess) {
+      return onSuccess(parsedData);
+    }
+
     return {
       status: "success",
-      message: "Data successfully saved."
-      //message: `Welcome, ${data.get("email")} ${data.get("content")}!`,
+      message: "Data successfully saved."      
     };
   } catch (e) {
-    console.log(e);
+    console.log('Save form data error:', e);
+
     if (e instanceof ZodError) {
       return {
         status: "error",
@@ -63,4 +69,35 @@ export async function saveFormData(
       message: "Something went wrong. Please try again.",
     };
   }
+}
+
+export async function registerUser(data: any) {
+  const { name, email, password } = data;
+
+  const exist = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  });
+
+  if (exist) {
+    throw new Error('Email already exists');    
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  try {
+    await prisma.user.create({
+      data: {
+        name,
+        email: email,
+        password: hashedPassword
+      }
+    });
+  } catch(e) {    
+  }  
+}
+
+export async function registerUserSuccess(data: any) {
+  return redirect('/test');
 }
