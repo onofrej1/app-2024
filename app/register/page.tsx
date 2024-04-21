@@ -1,17 +1,8 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import prisma from '@/lib/db'
-import rules, { FormSchema } from "@/validation";
-import bcrypt from 'bcrypt';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ErrorMessage } from "@hookform/error-message";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect, useRouter } from "next/navigation";
+import { FormSchema } from "@/validation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { registerUser, registerUserSuccess } from "@/actions";
 import Form from "@/components/form";
 

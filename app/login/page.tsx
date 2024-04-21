@@ -26,8 +26,6 @@ export default function Login() {
     });
 
     const onSubmit = async (data: any) => {
-        console.log('onSumit');
-        console.log(data);
         try {
             const response = await signIn('credentials', { ...data, redirect: false });
             console.log(response);

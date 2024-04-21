@@ -91,7 +91,8 @@ export async function registerUser(data: any) {
       data: {
         name,
         email: email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: 'user'
       }
     });
   } catch(e) {    
