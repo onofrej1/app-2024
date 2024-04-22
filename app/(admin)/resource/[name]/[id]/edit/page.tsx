@@ -50,7 +50,7 @@ export default async function EditResource({ params }: ResourceProps) {
                 }
                 await prismaQuery(resource.model, 'update', args);
                 console.log(data[field.name]);
-                const values = data[field.name].map((v: any) => ({ id: v }));
+                const values = data[field.name].filter(Boolean).map((v: any) => ({ id: v }));
                 if (values) {
                     console.log('aa');
                     console.log(values);

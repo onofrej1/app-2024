@@ -36,7 +36,7 @@ export default async function CreateResource({ params }: ResourceProps) {
             }
 
             if (field.type === 'm2m') {
-                const values = data[field.name].map((v: any) => ({ id: v }));
+                const values = data[field.name].filter(Boolean).map((v: any) => ({ id: v }));
                 if (values) {
                     data[field.name] = { connect: values };
                 }
@@ -45,7 +45,6 @@ export default async function CreateResource({ params }: ResourceProps) {
         const args: any = {
             data
         };
-        console.log(args.data);
 
         await prismaQuery(resource.model, 'create', args);
 

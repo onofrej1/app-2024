@@ -38,7 +38,7 @@ export async function saveFormData(
         data[field.name] = formData.get(field.name);
       }
     });
-
+    
     const validation = rules[formSchema];
     const parsedData = validation.parse(data);
     response = await action(parsedData);
@@ -51,7 +51,7 @@ export async function saveFormData(
         message: "Invalid form data.",
         errors: e.issues.map((issue) => ({
           path: issue.path.join("."),
-          message: `Server validation: ${issue.message}`,
+          message: issue.message,
         })),
       };
     }

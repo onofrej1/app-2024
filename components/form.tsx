@@ -63,7 +63,7 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
             });
         }
         if (state.status === "error" && state.message) {
-            alert(state.message);
+            //alert(state.message);
         }
         if (state.status === "success") {
             //alert(state.message);
@@ -93,22 +93,29 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                             render={({
                                 field: { onChange, value, name },
                             }) => (
-                                <Select
-                                    name={name}
-                                    onValueChange={onChange}
-                                    defaultValue={value?.toString()}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={field.label} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {field.options && field.options?.map(option =>
-                                            <SelectItem
-                                                key={option.value}
-                                                value={option.value.toString()}>{option.label} {name}</SelectItem>
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                                <>
+                                    <Select
+                                        name={name}
+                                        onValueChange={onChange}
+                                        defaultValue={value?.toString()}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={field.label} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {field.options && field.options?.map(option =>
+                                                <SelectItem
+                                                    key={option.value}
+                                                    value={option.value.toString()}>{option.label} {name}</SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                    <ErrorMessage
+                                        errors={errors}
+                                        name={field.name}
+                                    //render={({ message }) => <p>{message}</p>}
+                                    />
+                                </>
                             )}
                         />
                     }
@@ -120,7 +127,7 @@ export default function Form({ fields, formSchema, data, action }: FormProps) {
                             render={({
                                 field: { onChange, value, name, ref },
                             }) => {
-                                const selectValue = value && value.length ? value.map((v: any) => ({ value: Number(v.value || v.id), label: v.label || v[field.textField!] })) : [];
+                                const selectValue = value && value.length > 0 ? value.map((v: any) => ({ value: Number(v.value || v.id), label: v.label || v[field.textField!] })) : null;
                                 console.log(selectValue);
                                 return (
                                     <>
