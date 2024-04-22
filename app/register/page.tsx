@@ -1,15 +1,10 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormSchema } from "@/validation";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { registerUser, registerUserSuccess } from "@/actions";
+import { registerUser } from "@/actions";
 import Form from "@/components/form";
 
 export default function Register() {
-    const [error, setError] = useState('');
-    const router = useRouter();
-
     const fields = [
         { name: 'name', type: 'text', label: 'Name' },
         { name: 'email', type: 'text', label: 'Email' },
@@ -34,7 +29,6 @@ export default function Register() {
                         formSchema={FormSchema.RegisterUser} 
                         data={defaultValues} 
                         action={registerUser}
-                        onSuccess={registerUserSuccess}
                         />
                 </CardContent>
             </Card>

@@ -21,14 +21,14 @@ export type State =
   }
   | null;
 
-export async function saveFormData(  
+export async function saveFormData(
   fields: FormField[],
   formSchema: FormSchema,
   action: (data: any) => any,
-  onSuccess: (data: any) => any,
   prevState: State | null,
-  formData: FormData
+  formData: FormData,
 ): Promise<State> {
+  let response;
   try {
     const data: { [key: string]: any } = {};
     fields.forEach((field) => {
@@ -41,16 +41,7 @@ export async function saveFormData(
 
     const validation = rules[formSchema];
     const parsedData = validation.parse(data);
-    action(parsedData);
-
-    if (onSuccess) {
-      return onSuccess(parsedData);
-    }
-
-    return {
-      status: "success",
-      message: "Data successfully saved."      
-    };
+    response = await action(parsedData);
   } catch (e) {
     console.log('Save form data error:', e);
 
@@ -69,6 +60,17 @@ export async function saveFormData(
       message: "Something went wrong. Please try again.",
     };
   }
+
+  if (response && response.action) {
+    if (response.action === 'redirect') {
+      return redirect(response.path);
+    }
+  }
+
+  return {
+    status: "success",
+    message: "Action done."
+  };
 }
 
 export async function registerUser(data: any) {
@@ -81,7 +83,7 @@ export async function registerUser(data: any) {
   });
 
   if (exist) {
-    throw new Error('Email already exists');    
+    throw new Error('Email already exists');
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -95,10 +97,8 @@ export async function registerUser(data: any) {
         role: 'user'
       }
     });
-  } catch(e) {    
-  }  
-}
-
-export async function registerUserSuccess(data: any) {
-  return redirect('/test');
+  } catch (e) {
+    console.log(e);
+  }
+  return { action: 'redirect', path: `test`};
 }

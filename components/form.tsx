@@ -34,10 +34,9 @@ interface FormProps {
     formSchema: FormSchema,
     data: DefaultFormData;
     action: (data: any) => any;
-    onSuccess: (data: any) => any;
 }
 
-export default function Form({ fields, formSchema, data, action, onSuccess }: FormProps) {
+export default function Form({ fields, formSchema, data, action }: FormProps) {
     //useForm<FormSchemaInputType>
     const validation = rules[formSchema];
 
@@ -47,9 +46,10 @@ export default function Form({ fields, formSchema, data, action, onSuccess }: Fo
         defaultValues: data,
     });
 
-    const saveData = saveFormData.bind(null, fields, formSchema, action, onSuccess);
+    const saveData = saveFormData.bind(null, fields, formSchema, action);
     const [state, formAction] = useFormState<State, FormData>(saveData, null);
     const { pending } = useFormStatus();
+    console.log(state);
 
     useEffect(() => {
         if (!state) {
@@ -120,7 +120,8 @@ export default function Form({ fields, formSchema, data, action, onSuccess }: Fo
                             render={({
                                 field: { onChange, value, name, ref },
                             }) => {
-                                const selectValue = value ? value.map((v: any) => ({ value: Number(v.value || v.id), label: v.label || v[field.textField!] })) : [];
+                                const selectValue = value && value.length ? value.map((v: any) => ({ value: Number(v.value || v.id), label: v.label || v[field.textField!] })) : [];
+                                console.log(selectValue);
                                 return (
                                     <>
                                         <ReactSelect

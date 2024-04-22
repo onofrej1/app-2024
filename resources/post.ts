@@ -25,7 +25,7 @@ const post: Resource = {
       name: 'authorId', 
       type: 'fk',
       relation: 'author',
-      label: 'Author', 
+      label: 'Author',
       resource: PrismaModel.user,
       textField: 'name'
     },

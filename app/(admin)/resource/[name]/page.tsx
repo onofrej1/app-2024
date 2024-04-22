@@ -1,6 +1,7 @@
 import { prismaQuery } from '@/lib/db'
-import TableUI from "@/components/table";
+import TableUI, { TableData } from "@/components/table";
 import { resources } from "@/resources";
+import { redirect } from 'next/navigation';
 
 interface ResourceProps {
     params: {
@@ -10,7 +11,6 @@ interface ResourceProps {
 }
 
 export default async function Resource({ params, searchParams }: ResourceProps) {
-    console.log(searchParams);
     const { page, skip, ...where } = searchParams;
 
     const resourceName = params.name;
@@ -21,9 +21,26 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
     const args = { where };
     const data = await prismaQuery(resource.model, 'findMany', args);
 
+    const actions = [
+        {
+            label: 'Edit',
+            action: async (data: TableData) => {
+                "use server"
+                redirect(`/resource/${resourceName}/${data.id}/edit`)
+            },
+        },
+        {
+            label: 'Delete',
+            action: async (data: TableData) => {
+                "use server"
+                console.log(data)
+            },
+        }
+    ]
+
     return (
         <>  
-            <TableUI headers={resource.list} data={data} />
+            <TableUI headers={resource.list} data={data} actions={actions} />
         </>
     );
 }

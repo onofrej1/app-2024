@@ -8,7 +8,7 @@ export default withAuth(
         const { token } = request.nextauth;
 
         if (pathname.startsWith('/test') && token?.role !== 'user') {
-            return NextResponse.rewrite(new URL('/access-denied', request.url));
+            //return NextResponse.rewrite(new URL('/access-denied', request.url));
         }
     },
     {

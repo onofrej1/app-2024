@@ -31,20 +31,25 @@ export default async function CreateResource({ params }: ResourceProps) {
         const f = resource.form;
         f.forEach(field => {
             if (field.type === 'fk') {
-                data[field.relation!] = { connect: { id: Number(data[field.name]) }};
+                data[field.relation!] = { connect: { id: data[field.name] } };
                 delete data[field.name!];
             }
 
             if (field.type === 'm2m') {
-                const values = data[field.name].map((v: any) => ({ id: Number(v) }));
-                data[field.name] = { connect: values };
+                const values = data[field.name].map((v: any) => ({ id: v }));
+                if (values) {
+                    data[field.name] = { connect: values };
+                }
             }
         });
         const args: any = {
             data
         };
+        console.log(args.data);
 
         await prismaQuery(resource.model, 'create', args);
+
+        return { action: 'redirect', path: `/resource/${resourceName}` };
     }
 
     return (

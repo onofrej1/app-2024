@@ -2,6 +2,7 @@ import Form from "@/components/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prismaQuery } from '@/lib/db'
 import { resources } from "@/resources";
+import { redirect } from "next/navigation";
 
 interface ResourceProps {
     params: {
@@ -39,7 +40,7 @@ export default async function EditResource({ params }: ResourceProps) {
         const f = resource.form;
         for (const field of f) {
             if (field.type === 'fk') {
-                data[field.relation!] = { connect: { id: Number(data[field.name]) } };
+                data[field.relation!] = { connect: { id: data[field.name] } };
                 delete data[field.name!];
             }
             if (field.type === 'm2m') {
@@ -48,9 +49,13 @@ export default async function EditResource({ params }: ResourceProps) {
                     where: { id: Number(id) }
                 }
                 await prismaQuery(resource.model, 'update', args);
-
-                const values = data[field.name].map((v: any) => ({ id: Number(v) }));
-                data[field.name] = { connect: values };
+                console.log(data[field.name]);
+                const values = data[field.name].map((v: any) => ({ id: v }));
+                if (values) {
+                    console.log('aa');
+                    console.log(values);
+                    data[field.name] = { connect: values };
+                }
             }
         }
         const args: any = {
@@ -58,6 +63,8 @@ export default async function EditResource({ params }: ResourceProps) {
             where: { id: Number(id) }
         }
         await prismaQuery(resource.model, 'update', args);
+
+        return { action: 'redirect', path: `/resource/${resourceName}`};
     }
 
     return (

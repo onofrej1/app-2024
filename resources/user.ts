@@ -1,7 +1,7 @@
 import { PrismaModel, Resource } from '@/resources/resources.types';
 import { FormSchema } from '@/validation';
 
-const user: Resource = {
+/*const user: Resource = {
     name: 'User',
     name_plural: 'Users',
     model: PrismaModel.user,
@@ -10,10 +10,10 @@ const user: Resource = {
     //relations: ['posts'],
     rules: FormSchema.CreateEditUser,
     //rules,
-    /*filter: [
+    filter: [
       { name: 'name', type: 'text', label: 'Name' },
       { name: 'email', type: 'text', label: 'Email' },
-    ],*/
+    ],
     form: [
         { name: 'name', type: 'text', label: 'Name' },
         { name: 'email', type: 'text', label: 'Email' },
@@ -23,4 +23,4 @@ const user: Resource = {
         { name: 'email', header: 'Email' },
     ],
 };
-export { user };
+export { user };*/

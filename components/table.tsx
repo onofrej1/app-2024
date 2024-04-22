@@ -1,3 +1,5 @@
+"use client"
+
 import {
     Table,
     TableBody,
@@ -6,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 export interface TableData {
     [key: string]: any;
@@ -22,28 +24,16 @@ export interface TableAction {
     icon?: React.ElementType;
     //color: ButtonProps['color'];
     action: (data: TableData) => void;
-    type?: 'edit' | 'delete' | 'info';
+    //type?: 'edit' | 'delete' | 'info';
 }
 
 interface TableProps {
     headers: TableHeader[];
     data: TableData[];
+    actions?: TableAction[];
 }
 
-const actions = [
-    {
-        label: 'Edit',
-        action: (data: TableData) => console.log(data),
-        type: 'edit'
-    },
-    {
-        label: 'Delete',
-        action: (data: TableData) => console.log(data),
-        type: 'delete'
-    }
-]
-
-export default function TableUI({ headers, data }: TableProps) {
+export default function TableUI({ headers, data, actions }: TableProps) {
 
     return (
         <Table>
@@ -66,8 +56,8 @@ export default function TableUI({ headers, data }: TableProps) {
                             </TableCell>
                         ))}
                         <TableCell className="w-[100px]">
-                            {actions.map((action) => (
-                                <Button key={action.label} className="ml-2">{action.label}</Button>
+                            {actions?.map((action) => (
+                                <Button onClick={() => action.action(row)} key={action.label} className="ml-2">{action.label}</Button>
                             ))}
                         </TableCell>
                     </TableRow>
