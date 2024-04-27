@@ -1,4 +1,4 @@
-import Form from "@/components/form";
+import Form from "@/components/form/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prismaQuery } from '@/lib/db'
 import { resources } from "@/resources";

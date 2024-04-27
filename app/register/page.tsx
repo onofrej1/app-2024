@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormSchema } from "@/validation";
 import { registerUser } from "@/actions";
-import Form from "@/components/form";
+import Form from "@/components/form/form";
 
 export default function Register() {
     const fields = [

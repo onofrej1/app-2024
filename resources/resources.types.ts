@@ -1,11 +1,15 @@
 import { TableHeader } from "@/components/table";
 import { FormSchema } from "@/validation";
-import { z } from "zod";
 
 interface SelectOption {
     label: string;
     value: string | number;
-  }
+}
+
+export interface MultiSelectOption {
+    label: string;
+    value: number;
+}
 
 interface FormField {
     // mandatory props
@@ -18,7 +22,8 @@ interface FormField {
     textField?: string;
 
     // optional props
-    options?: SelectOption[];
+    options?: SelectOption[] | MultiSelectOption[];
+
     /*value?: string;
     helperText?: string;
     rows?: number;    
@@ -33,7 +38,7 @@ interface FormField {
     //resource?: string;
     //textField?: string;
     //valueField?: string;
-    
+
     // DatePicker
     //showTimeSelect?: boolean;
     //showTimeSelectOnly?: boolean;
@@ -42,7 +47,7 @@ interface FormField {
 
 interface TableField {
     name: string;
-    header?: string | JSX.Element;    
+    header?: string | JSX.Element;
     //cell?: (info: CellContext<TableData, unknown>) => JSX.Element,    
 }
 

@@ -27,8 +27,11 @@ const CreateEditPost = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(4),
   content: z.string().min(1),
-  authorId: z.string(),
-  categories: z.array(z.coerce.number()).optional(),
+  authorId: z.string().min(1, 'Author field is required'),
+  categories: z.array(z.coerce.number())
+    .optional()
+    .default([])
+    //.transform((val) => val ? val : []),
 });
 
 export enum FormSchema {
