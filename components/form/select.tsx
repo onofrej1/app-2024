@@ -8,54 +8,54 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { renderError } from './utils';
 
 interface SelectOption {
-    label: string,
-    value: string | number,
+  label: string,
+  value: string | number,
 }
 
 interface InputProps {
-    label: string,
-    name: string,
-    errors: FieldErrors<DefaultFormData>,
-    options: SelectOption[],
-    value: string | number,
-    onChange: any,
+  label: string,
+  name: string,
+  errors: FieldErrors<DefaultFormData>,
+  options: SelectOption[],
+  value: string | number,
+  onChange: (value: string) => void,
 }
 
 export default function FormSelect({
-    label,
-    name,
-    errors,
-    options,
-    value,
-    onChange
+  label,
+  name,
+  errors,
+  options,
+  value,
+  onChange
 }: InputProps) {
 
-    return (
-        <>
-            <Label>{label}</Label>
-            <div>
-                <Select
-                    name={name}
-                    onValueChange={onChange}
-                    defaultValue={value?.toString()}
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder={label} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {options && options?.map(option =>
-                            <SelectItem
-                                key={option.value}
-                                value={option.value.toString()}>{option.label} {name}</SelectItem>
-                        )}
-                    </SelectContent>
-                </Select>
-            </div>
-            <ErrorMessage
-                errors={errors}
-                name={name}
-                render={renderError}
-            />
-        </>
-    )
+  return (
+    <>
+      <Label>{label}</Label>
+      <div>
+        <Select
+          name={name}
+          onValueChange={onChange}
+          defaultValue={value?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={label} />
+          </SelectTrigger>
+          <SelectContent>
+            {options && options?.map(option =>
+              <SelectItem
+                key={option.value}
+                value={option.value.toString()}>{option.label} {name}</SelectItem>
+            )}
+          </SelectContent>
+        </Select>
+      </div>
+      <ErrorMessage
+        errors={errors}
+        name={name}
+        render={renderError}
+      />
+    </>
+  )
 }
