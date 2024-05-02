@@ -39,16 +39,23 @@ export enum FormSchema {
   'RegisterUser' = 'RegisterUser',
   'LoginUser' = 'LoginUser',
   'CreateEditPost' = 'CreateEditPost',
-  'CreateEditCategory' = 'CreateEditCategory'
+  'CreateEditCategory' = 'CreateEditCategory',
+  'FilterResource' = 'FilterResource'
 }
+
+const FilterResource = z.object({
+  id: z.string().optional(),
+});
 
 const rules = {
   //CreateEditUser,
   CreateEditPost,
   CreateEditCategory,
   RegisterUser,
-  LoginUser
+  LoginUser,
+  FilterResource: z.any(),
 };
+
 export default rules;
 
 //export type FormSchemaInputType = z.input<typeof formSchema>;

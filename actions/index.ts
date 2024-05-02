@@ -4,7 +4,7 @@ import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
 import { ZodError } from "zod";
 import bcrypt from 'bcrypt';
-import { redirect } from 'next/navigation';
+import { ReadonlyURLSearchParams, redirect } from 'next/navigation';
 
 export type State =
   | {
@@ -30,6 +30,7 @@ export async function saveFormData(
 ): Promise<State> {
   let response;
   try {
+    console.log('submit');
     const data: { [key: string]: any } = {};
     fields.forEach((field) => {
       if (field.type === 'm2m') {
@@ -38,9 +39,10 @@ export async function saveFormData(
         data[field.name] = formData.get(field.name);
       }
     });
-    
+    console.log('before validation');
     const validation = rules[formSchema];
-    const parsedData = validation.parse(data);
+    const parsedData = validation ? validation.parse(data) : data;
+    console.log('parsed');
     response = await action(parsedData);
   } catch (e) {
     console.log('Save form data error:', e);
@@ -71,6 +73,19 @@ export async function saveFormData(
     status: "success",
     message: "Action done."
   };
+}
+
+export async function filterResource(params: any, data: any) {
+    "use server"
+    console.log('data', data);
+
+    /*const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    Object.keys(data).forEach(name => {
+      params.set(name, data[name]);
+    });
+    console.log(params.toString());*/
+    //replace(`${pathname}?${params.toString()}`);
 }
 
 export async function registerUser(data: any) {

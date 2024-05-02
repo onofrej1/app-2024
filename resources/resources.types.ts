@@ -51,6 +51,13 @@ interface TableField {
     //cell?: (info: CellContext<TableData, unknown>) => JSX.Element,    
 }
 
+interface DataFilter {
+  name: string;
+  type: string;
+  label: string;
+  options?: SelectOption[];
+}
+
 type Resource = {
     name: string;
     name_plural: string;
@@ -63,7 +70,7 @@ type Resource = {
     menuIcon: string;
     form: FormField[];
     list: TableHeader[];
-    //filter: DataFilter[];
+    filter: DataFilter[];
     canAddItem?: boolean;
     canEditItem?: boolean;
 }

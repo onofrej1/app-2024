@@ -47,12 +47,15 @@ export default function Form({ fields, formSchema, data, action, buttons, render
     resolver: zodResolver(validation),
     defaultValues: data,
   });
+  console.log(action);
 
-  const saveData = saveFormData.bind(null, fields, formSchema, action);
-  const [state, formAction] = useFormState<State, FormData>(saveData, null);
+  const submit = saveFormData.bind(null, fields, formSchema, action);
+  const [state, formAction] = useFormState<State, FormData>(submit, null);
   const { pending } = useFormStatus();
 
+  console.log('state', state);
   useEffect(() => {
+    console.log(state);
     if (!state) {
       return;
     }
@@ -71,9 +74,9 @@ export default function Form({ fields, formSchema, data, action, buttons, render
     }
   }, [state, setError]);
 
-  console.log(getValues());
+  //console.log(getValues());
 
-  const renderField = (field: FormField) => 
+  const renderField = (field: FormField) =>
     <div key={field.name} className="mb-2">
       {['text', 'number', 'email', 'hidden'].includes(field.type) && <>
         <FormInput
@@ -148,13 +151,21 @@ export default function Form({ fields, formSchema, data, action, buttons, render
       }
     </div>
 
-  const fieldsToRender = fields.reduce((acc,field)=> {
+  const fieldsToRender = fields.reduce((acc, field) => {
     acc[field.name] = renderField(field);
     return acc;
   }, {} as Record<string, JSX.Element>);
 
   if (render) {
-    return render({ fields: fieldsToRender, formState: { isValid, pending }});
+    const r = render({ fields: fieldsToRender, formState: { isValid, pending } });
+    return <form action={formAction}>
+      {r}
+      <button type="submit">Filter</button>
+      </form>;
+    /*return <><form action={formAction}>
+      {f}
+    </form>
+    </>;*/
   }
 
   return (

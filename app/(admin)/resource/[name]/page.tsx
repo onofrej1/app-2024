@@ -44,7 +44,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
   }
   const args = { 
     //where,
-    skip: Number(page),
+    skip: Number(page) || 0,
     take: 5, 
   };
   const data = await prismaQuery(resource.model, 'findMany', args);

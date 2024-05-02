@@ -14,10 +14,10 @@ const post: Resource = {
   menuIcon: '',
   //relations: ['posts'],
   //rules,
-  /*filter: [
+  filter: [
     { name: 'name', type: 'text', label: 'Name' },
     { name: 'email', type: 'text', label: 'Email' },
-  ],*/
+  ],
   form: [
     { name: 'title', type: 'text', label: 'Title' },
     { name: 'content', type: 'text', label: 'Content' },
