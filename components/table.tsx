@@ -15,7 +15,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import Form, { FormRenderFunc } from "./form/form";
 import { resources } from "@/resources";
 import { FormSchema } from "@/validation";
-import { filterResource } from "@/actions";
+import { filterResource } from "@/actions-ui";
 
 export interface TableData {
   [key: string]: any;
@@ -73,7 +73,6 @@ export default function TableUI({ headers, data, actions }: TableProps) {
     }
     replace(`${pathname}?${params.toString()}`);
   }, 300);
-  
 
   const filters = resource.filter;
   //console.log(filters);
@@ -82,24 +81,48 @@ export default function TableUI({ headers, data, actions }: TableProps) {
     return (
       <div className="flex flex-row">
         {filters.map(f => <span key={f.name}>{fields[f.name]}</span>)}
-        
       </div>
     )
   };
 
-  const act = filterResource.bind(null, searchParams);
+  const submit = (e: any) => {
+    e.preventDefault();
+    console.log('submitt');
+  }
+
+  const filter = (data: any) => {
+    console.log(searchParams);
+
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '0');
+    Object.keys(data).forEach(name => {
+      params.set(name, data[name]);
+    });
+    console.log(params.toString());
+    console.log(pathname);
+    const path = `${pathname}?${params.toString()}`;
+    replace(path);
+  }
 
   return (
     <>
       <button onClick={() => changePage(page + 1)}> Next Page </button>
       <button onClick={() => changePage(page - 1)}> Prev Page </button>
 
-      
       <Form fields={filters}
+        formSchema={FormSchema.FilterResource}
+        data={{}}
+        render={render}
+        action={filter}
+      />
+
+      {/*<Form fields={filters}
             formSchema={FormSchema.FilterResource}
             data={{}}
+            
             render={render}
-            action={act} />
+            action={filterResource}
+  actionParams={[pathname, searchParams]} />*/}
 
       {/*<input
         className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"

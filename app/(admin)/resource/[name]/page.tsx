@@ -5,6 +5,9 @@ import { redirect, usePathname, useRouter } from 'next/navigation';
 
 import { faker } from '@faker-js/faker';
 import { PrismaModel } from '@/resources/resources.types';
+import Form, { FormRenderFunc } from '@/components/form/form';
+import { z } from 'zod';
+import { FormSchema } from '@/validation';
 // or, if desiring a different locale
 // import { fakerDE as faker } from '@faker-js/faker';
 
@@ -42,8 +45,18 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
   if (!resource) {
     throw new Error(`Resource ${resourceName} not found !`);
   }
+
+  const filters = resource.filter;
+  const w = Object.keys(where).reduce((acc, k) => {
+    const value = where[k];
+    if (value === '') return acc;
+    acc[k] = { contains: value };
+    return acc;
+  }, {} as Record<string, any>);
+  console.log(w);
+
   const args = { 
-    //where,
+    where: w,
     skip: Number(page) || 0,
     take: 5, 
   };
@@ -67,11 +80,16 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
   ]
 
   const pageNumber = Number(page) || 0;
+  //console.log(filters);
+
+  /*const f = filters.reduce((acc,field)=> {
+    acc[field.name] = z.string().optional();
+    return acc;
+  }, {} as Record<string, any>);*/
 
   return (
     <>
       
-
       <TableUI headers={resource.list} data={data} actions={actions} />
     </>
   );

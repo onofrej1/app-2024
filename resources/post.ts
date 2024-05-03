@@ -15,8 +15,8 @@ const post: Resource = {
   //relations: ['posts'],
   //rules,
   filter: [
-    { name: 'name', type: 'text', label: 'Name' },
-    { name: 'email', type: 'text', label: 'Email' },
+    { name: 'title', type: 'text', label: 'Title' },
+    { name: 'content', type: 'text', label: 'Content' },
   ],
   form: [
     { name: 'title', type: 'text', label: 'Title' },

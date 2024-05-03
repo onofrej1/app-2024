@@ -1,9 +1,7 @@
-"use server";
-import prisma from "@/lib/db";
+"use client"
 import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
 import { ZodError } from "zod";
-import bcrypt from 'bcrypt';
 import { redirect } from 'next/navigation';
 
 export type State =
@@ -32,7 +30,6 @@ export async function saveFormData(
 ): Promise<State> {
   let response;
   try {
-    console.log('submit');
     const data: { [key: string]: any } = {};
     fields.forEach((field) => {
       if (field.type === 'm2m') {
@@ -44,6 +41,7 @@ export async function saveFormData(
     const validation = rules[formSchema];
     const parsedData = validation ? validation.parse(data) : data;
 
+    console.log('params', actionParams);
     response = await action(...actionParams, parsedData);
   } catch (e) {
     console.log('Save form data error:', e);
@@ -76,8 +74,7 @@ export async function saveFormData(
   };
 }
 
-export async function filterResource(pathname: string, searchParams: any, data: any) {
-    "use server"
+export async function filterResource(pathname: string, searchParams: any, replace: any, data: any) {
     console.log('data', data);
     console.log(searchParams);
 
@@ -88,37 +85,8 @@ export async function filterResource(pathname: string, searchParams: any, data: 
     });
     console.log(params.toString());
     console.log(pathname);
+    //return redirect(`${pathname}?${params.toString()}`);
     const path = `${pathname}?${params.toString()}`;
-
-    return { action: 'redirect', path };
-}
-
-export async function registerUser(data: any) {
-  const { name, email, password } = data;
-
-  const exist = await prisma.user.findUnique({
-    where: {
-      email
-    }
-  });
-
-  if (exist) {
-    throw new Error('Email already exists');
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  try {
-    await prisma.user.create({
-      data: {
-        name,
-        email: email,
-        password: hashedPassword,
-        role: 'user'
-      }
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  return { action: 'redirect', path: `test`};
+    replace(path);
+    //return { action: 'redirect', path };
 }

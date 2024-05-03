@@ -1,7 +1,9 @@
 "use client";
 
 import { Controller, FieldPath, useForm } from 'react-hook-form';
-import { State, saveFormData } from '@/actions';
+//import { State, saveFormData } from '@/actions';
+import { State, saveFormData } from '@/actions-ui';
+
 import { useFormState, useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -34,12 +36,18 @@ interface FormProps {
   fields: FormField[];
   formSchema: FormSchema,
   data?: DefaultFormData;
-  action: (data: any) => any;
+  onSubmit?: any,
+  //action: (data: any) => any;
+  action: (...args: any[]) => any,
+  actionParams?: any;
   buttons?: ((props: FormState) => JSX.Element)[],
   render?: FormRenderFunc,
 }
 
-export default function Form({ fields, formSchema, data, action, buttons, render }: FormProps) {
+export default function Form({ fields, formSchema, data, action, onSubmit, actionParams = [], buttons, render }: FormProps) {
+  if (onSubmit) {
+    //return onSubmit();
+  }
   const validation = rules[formSchema];
 
   const { register, formState: { isValid, errors }, getValues, setError, control, reset } = useForm({
@@ -49,7 +57,7 @@ export default function Form({ fields, formSchema, data, action, buttons, render
   });
   console.log(action);
 
-  const submit = saveFormData.bind(null, fields, formSchema, action);
+  const submit = saveFormData.bind(null, fields, formSchema, action, actionParams);
   const [state, formAction] = useFormState<State, FormData>(submit, null);
   const { pending } = useFormStatus();
 
@@ -59,7 +67,7 @@ export default function Form({ fields, formSchema, data, action, buttons, render
     if (!state) {
       return;
     }
-    if (state.status === "error") {
+    if (state.status === "error" && state.errors) {
       state.errors?.forEach((error) => {
         setError(error.path as FieldPath<FormValues>, {
           message: error.message,
@@ -157,15 +165,13 @@ export default function Form({ fields, formSchema, data, action, buttons, render
   }, {} as Record<string, JSX.Element>);
 
   if (render) {
-    const r = render({ fields: fieldsToRender, formState: { isValid, pending } });
-    return <form action={formAction}>
-      {r}
-      <button type="submit">Filter</button>
-      </form>;
-    /*return <><form action={formAction}>
-      {f}
-    </form>
-    </>;*/
+    const renderContent = render({ fields: fieldsToRender, formState: { isValid, pending } });
+    return (
+      <form action={formAction}>
+        {renderContent}
+        <button type="submit">Filter</button>
+      </form>
+    );
   }
 
   return (
