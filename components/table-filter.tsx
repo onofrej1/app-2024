@@ -8,7 +8,7 @@ import { resources } from "@/resources";
 import { FormSchema } from "@/validation";
 
 export default function TableFilter() {
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = useParams();
@@ -32,41 +32,27 @@ export default function TableFilter() {
 
   const filters = resource.filter;
   const defaultData: Record<string, string | undefined> = {};
-  filters.forEach(f => {
-    defaultData[f.name] = searchParams.get(f.name)?.toString();
-    /*f['onChange'] = (submit: any) => {
-      console.log('change field');
-      filter(defaultData);
-    };*/
-    f['onChange'] = (values: any, setFocus: any, fieldName: any) => {
-      console.log('change field', fieldName);
-      filter(values, () => setFocus(fieldName));
-      
-    };
+  filters.forEach(field => {
+    defaultData[field.name] = searchParams.get(field.name)?.toString();
+    field['onChange'] = (values: any) => filter(values);
   })
 
   const render: FormRenderFunc = ({ fields, formState }) => {
     return (
-      <div className="flex flex-row">
+      <div className="flex flex-row gap-2">
         {filters.map(f => <span key={f.name}>{fields[f.name]}</span>)}
-        
       </div>
     )
   };
 
-  const filter = (data: any, callback?: any) => {
-    console.log('filter');
+  const filter = (data: any) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', '0');
     Object.keys(data).forEach(name => {
       params.set(name, data[name]);
     });
     const path = `${pathname}?${params.toString()}`;
-    replace(path);
-    if (callback) {
-      console.log('callback');
-      callback();
-    }
+    replace(path, { scroll: false });
   }
 
   return (
@@ -76,7 +62,7 @@ export default function TableFilter() {
         data={defaultData}
         render={render}
         useClient={true}
-        action={filter}
+        action={() => {}}
       />
 
       {/*<input

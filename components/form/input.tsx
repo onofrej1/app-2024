@@ -4,14 +4,14 @@ import { ErrorMessage } from '@hookform/error-message';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { DefaultFormData } from './form';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import { FieldErrors, RegisterOptions, UseFormRegister } from 'react-hook-form';
 import { renderError } from './utils';
 
 interface InputProps {
   label: string,
   type: string,
   name: string,
-  onChange: any,
+  onChange?: any,
   errors: FieldErrors<DefaultFormData>,
   register: UseFormRegister<DefaultFormData>,
 }
@@ -21,6 +21,11 @@ export default function FormInput({ label, name, type, onChange, errors, registe
     return <Input type={type || 'text'} {...register(name)} placeholder={label} />;
   }
 
+  const registerOptions: RegisterOptions = {};
+  if (onChange) {
+    registerOptions['onChange'] = onChange;
+  }
+
   return (
     <>
       <Label>{label}</Label>
@@ -28,9 +33,7 @@ export default function FormInput({ label, name, type, onChange, errors, registe
         <Input
           key={name}
           type={type || 'text'}
-          {...register(name, {
-            onChange: (e) => onChange(e)
-          })}
+          {...register(name, registerOptions)}
           placeholder={label}
         />
       </div>

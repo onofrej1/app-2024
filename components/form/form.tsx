@@ -88,10 +88,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
           errors={errors}
           type={field.type}
           register={register}
-          onChange={() => {
-            field.onChange(getValues(), setFocus, field.name);
-            //setFocus(field.name);
-          }}
+          onChange={(e: any) => field.onChange(getValues(), e)}
         />
       </>
       }
