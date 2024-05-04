@@ -21,6 +21,7 @@ interface FormField {
     onChange?: any;
     relation?: string;
     textField?: string;
+    className?: string;
 
     // optional props
     options?: SelectOption[] | MultiSelectOption[];
@@ -58,6 +59,7 @@ interface DataFilter {
   label: string;
   options?: SelectOption[];
   onChange?: any;
+  className?: any;
 }
 
 type Resource = {

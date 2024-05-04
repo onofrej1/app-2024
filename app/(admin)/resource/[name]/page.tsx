@@ -4,6 +4,7 @@ import { resources } from "@/resources";
 import { redirect } from 'next/navigation';
 import TablePagination from "@/components/table-pagination";
 import TableFilter from "@/components/table-filter";
+import { Pencil } from 'lucide-react';
 
 interface ResourceProps {
   params: {
@@ -31,17 +32,19 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
   const totalRows = await prismaQuery(resource.model, 'count', { where: whereQuery });
 
   const skip = (Number(page) || 1) - 1;
+  const take = Number(pageCount) || 10;
   const args = {
     where: whereQuery,
-    skip: skip * (Number(pageCount) || 10),
-    take: Number(pageCount) || 10,
-    orderBy: [{ 'id': 'asc' }]
+    skip: skip * take,
+    take: take,
+    //orderBy: [{ 'id': 'asc' }]
   };
   const data = await prismaQuery(resource.model, 'findMany', args);
 
   const actions = [
     {
       label: 'Edit',
+      icon: 'pencil' as const,
       action: async (data: TableData) => {
         "use server"
         redirect(`/resource/${resourceName}/${data.id}/edit`)
@@ -49,6 +52,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
     },
     {
       label: 'Delete',
+      //icon: 'pencil',
       action: async (data: TableData) => {
         "use server"
         console.log(data)

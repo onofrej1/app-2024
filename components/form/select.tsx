@@ -6,8 +6,6 @@ import { DefaultFormData } from './form';
 import { FieldErrors } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { renderError } from './utils';
-import { type ClassValue, clsx } from "clsx"
-import { cn } from '@/lib/utils';
 
 interface SelectOption {
   label: string,
@@ -19,6 +17,7 @@ interface InputProps {
   name: string,
   errors?: FieldErrors<DefaultFormData>,
   options: SelectOption[],
+  className?: string,
   value: string | number,
   inline?: boolean,
   onChange: (value: string) => void,
@@ -30,18 +29,9 @@ export default function FormSelect({
   errors,
   options,
   value,
-  inline,
+  className,
   onChange
 }: InputProps) {
-
-  /*const clsName = cn({ 
-    'flex-col': !inline,
-    'flex-row': inline,
-    'items-center': inline,
-    'gap-2': inline
-  }, 
-    'flex justify-center'
-  );*/
 
   return (
     <div>
@@ -52,7 +42,7 @@ export default function FormSelect({
           onValueChange={onChange}
           defaultValue={value?.toString()}
         >
-          <SelectTrigger>
+          <SelectTrigger className={className}>
             <SelectValue placeholder={label} />
           </SelectTrigger>
           <SelectContent>

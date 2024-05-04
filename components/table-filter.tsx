@@ -39,7 +39,7 @@ export default function TableFilter() {
   const render: FormRenderFunc = ({ fields, formState }) => {
     return (
       <div className="flex flex-row flex-wrap gap-2">
-        {filters.map(f => fields[f.name])}
+        {filters.map(f => <div key={f.name}>{fields[f.name]}</div>)}
       </div>
     )
   };
@@ -52,22 +52,19 @@ export default function TableFilter() {
     } else {
       params.set(fieldName, value);
     }
-    
+
     const path = `${pathname}?${params.toString()}`;
     replace(path, { scroll: false });
   }
 
   return (
-    <>
-      <Form 
-        fields={filters}
-        formSchema={FormSchema.FilterResource}
-        data={defaultData}
-        render={render}
-        useClient={true}
-        action={() => {}}
-      />
-
-    </>
+    <Form
+      fields={filters}
+      formSchema={FormSchema.FilterResource}
+      data={defaultData}
+      render={render}
+      useClient={true}
+      action={() => { }}
+    />
   )
 }

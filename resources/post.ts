@@ -17,7 +17,7 @@ const post: Resource = {
   filter: [
     { name: 'title', type: 'text', label: 'Title' },
     //{ name: 'content', type: 'text', label: 'Content' },
-    { name: 'content', type: 'select', label: 'Content', options: [
+    { name: 'content', type: 'select', className: 'w-60', label: 'Content', options: [
       {
         label: 'All',
         value: 'all'

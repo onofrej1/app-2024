@@ -128,6 +128,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
               name={name}
               errors={errors}
               value={value}
+              className={field.className}
               onChange={(value) => {
                 onChange(value);
                 field.onChange(value);

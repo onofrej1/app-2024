@@ -9,6 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { LucideIcon, Pencil } from "lucide-react";
+
+type IconNames = 'pencil' | 'delete';
+
+export const Icons: Record<IconNames, LucideIcon> = {
+  'pencil': Pencil,
+  'delete': Pencil,
+}
 
 export interface TableData {
   [key: string]: any;
@@ -21,7 +29,7 @@ export interface TableHeader {
 
 export interface TableAction {
   label: string;
-  icon?: React.ElementType;
+  icon?: IconNames;
   action: (data: TableData) => void;
 
   //color: ButtonProps['color'];
@@ -44,7 +52,7 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
         <TableHeader>
           <TableRow>
             {headers.map((header) => (
-              <TableHead className="w-[100px]" key={header.name}>
+              <TableHead  key={header.name}>
                 {header.header}
               </TableHead>
             ))}
@@ -54,14 +62,20 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
           {data.map((row, index) => (
             <TableRow key={index}>
               {headers.map((header) => (
-                <TableCell className="w-[100px]" key={header.name}>
+                <TableCell  key={header.name}>
                   {row[header.name]}
                 </TableCell>
               ))}
-              <TableCell className="w-[100px]">
-                {actions?.map((action) => (
-                  <Button onClick={() => action.action(row)} key={action.label} className="ml-2">{action.label}</Button>
-                ))}
+              <TableCell className="flex flex-row gap-1 justify-end">
+                {actions?.map((action) => {
+                  const Icon = Icons[action.icon as string];
+                  return (
+                    <Button onClick={() => action.action(row)} key={action.label} className="flex flex-row gap-2">
+                      {action.icon ? <Icon size={14} /> : null} 
+                      {action.label}
+                    </Button>
+                  )
+                })}
               </TableCell>
             </TableRow>
           ))}

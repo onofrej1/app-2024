@@ -53,7 +53,7 @@ export default function TablePagination({ totalRows }: TablePaginationProps) {
         <PaginationContent>
           <PaginationItem>
             {page === 1 ?
-              <PaginationPrevious className="text-gray-400 " />
+              <PaginationPrevious className="text-gray-400 pointer-events-none" />
               : <PaginationPrevious href="#" onClick={() => goToPage(page - 1)} />}
           </PaginationItem>
           {page > 1 && <PaginationItem>
@@ -73,7 +73,7 @@ export default function TablePagination({ totalRows }: TablePaginationProps) {
           <PaginationItem>
             {page < totalPages ?
               <PaginationNext href="#" onClick={() => goToPage(page + 1)} />
-              : <PaginationNext className="text-gray-400 " />}
+              : <PaginationNext className="text-gray-400 pointer-events-none" />}
 
           </PaginationItem>
         </PaginationContent>
