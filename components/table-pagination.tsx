@@ -34,11 +34,7 @@ export default function TablePagination({ totalRows }: TablePaginationProps) {
   const handlePageCount = useDebouncedCallback((pageCount) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', '1');
-    if (pageCount) {
-      params.set('pageCount', pageCount);
-    } else {
-      params.delete('pageCount');
-    }
+    params.set('pageCount', pageCount);
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 

@@ -14,7 +14,7 @@ interface ResourceProps {
 }
 
 export default async function Resource({ params, searchParams }: ResourceProps) {
-  const { page, pageCount, ...where } = searchParams;
+  const { page, pageCount, sortBy = 'id', ...where } = searchParams;
 
   const resourceName = params.name;
   const resource = resources.find(r => r.resource === resourceName);
@@ -33,11 +33,12 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
+  
   const args = {
     where: whereQuery,
     skip: skip * take,
     take: take,
-    //orderBy: [{ 'id': 'asc' }]
+    orderBy: [{ [sortBy]: 'asc' }]
   };
   const data = await prismaQuery(resource.model, 'findMany', args);
 

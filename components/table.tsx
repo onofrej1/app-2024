@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { LucideIcon, Pencil } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type IconNames = 'pencil' | 'delete';
 
@@ -44,7 +45,17 @@ interface TableProps {
 }
 
 export default function TableComponent({ headers, data, totalRows, actions }: TableProps) {
-    
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
+
+  const sortTable = (column: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    params.set('sortBy', column);
+    replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <>
       <Table>
@@ -52,7 +63,7 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
         <TableHeader>
           <TableRow>
             {headers.map((header) => (
-              <TableHead  key={header.name}>
+              <TableHead  key={header.name} onClick={() => sortTable(header.name)}>
                 {header.header}
               </TableHead>
             ))}
@@ -62,13 +73,13 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
           {data.map((row, index) => (
             <TableRow key={index}>
               {headers.map((header) => (
-                <TableCell  key={header.name}>
+                <TableCell key={header.name}>
                   {row[header.name]}
                 </TableCell>
               ))}
               <TableCell className="flex flex-row gap-1 justify-end">
                 {actions?.map((action) => {
-                  const Icon = Icons[action.icon as string];
+                  const Icon = Icons[action.icon]; // as Record<IconNames, LucideIcon>;
                   return (
                     <Button onClick={() => action.action(row)} key={action.label} className="flex flex-row gap-2">
                       {action.icon ? <Icon size={14} /> : null} 
