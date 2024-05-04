@@ -1,8 +1,8 @@
 "use client";
 
 import { Controller, FieldPath, useForm } from 'react-hook-form';
-//import { State, saveFormData } from '@/actions';
-import { State, saveFormData } from '@/actions-ui';
+import { State, submitForm } from '@/actions';
+import { submitForm as submitFormClient } from '@/actions-client';
 
 import { useFormState, useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,34 +36,29 @@ interface FormProps {
   fields: FormField[];
   formSchema: FormSchema,
   data?: DefaultFormData;
-  onSubmit?: any,
-  //action: (data: any) => any;
+  useClient?: boolean,
   action: (...args: any[]) => any,
   actionParams?: any;
   buttons?: ((props: FormState) => JSX.Element)[],
   render?: FormRenderFunc,
 }
 
-export default function Form({ fields, formSchema, data, action, onSubmit, actionParams = [], buttons, render }: FormProps) {
-  if (onSubmit) {
-    //return onSubmit();
-  }
+export default function Form({ fields, formSchema, data, useClient = false, action, actionParams = [], buttons, render }: FormProps) {
+  
   const validation = rules[formSchema];
 
-  const { register, formState: { isValid, errors }, getValues, setError, control, reset } = useForm({
+  const { register, formState: { isValid, errors }, getValues, setError, control } = useForm({
     mode: "onSubmit",
     resolver: zodResolver(validation),
     defaultValues: data,
   });
-  console.log(action);
 
-  const submit = saveFormData.bind(null, fields, formSchema, action, actionParams);
+  const submitHandler = useClient ? submitFormClient : submitForm;
+  const submit = submitHandler.bind(null, fields, formSchema, action, actionParams);
   const [state, formAction] = useFormState<State, FormData>(submit, null);
   const { pending } = useFormStatus();
 
-  console.log('state', state);
   useEffect(() => {
-    console.log(state);
     if (!state) {
       return;
     }
@@ -75,10 +70,10 @@ export default function Form({ fields, formSchema, data, action, onSubmit, actio
       });
     }
     if (state.status === "error" && state.message) {
-      //alert(state.message);
+      console.log(state.message);
     }
     if (state.status === "success") {
-      //alert(state.message);
+      console.log(state.message);
     }
   }, [state, setError]);
 

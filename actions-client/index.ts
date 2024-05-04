@@ -3,26 +3,11 @@ import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
 import { ZodError } from "zod";
 import { redirect } from 'next/navigation';
+import { State } from "@/actions";
 
-export type State =
-  | {
-    status: "success";
-    message: string;
-  }
-  | {
-    status: "error";
-    message: string;
-    errors?: Array<{
-      path: string;
-      message: string;
-    }>;
-  }
-  | null;
-
-export async function saveFormData(
+export async function submitForm(
   fields: FormField[],
   formSchema: FormSchema,
-  //action: (data: any) => any,
   action: (...args : any[]) => any,
   actionParams: any,
   prevState: State | null,
@@ -41,10 +26,9 @@ export async function saveFormData(
     const validation = rules[formSchema];
     const parsedData = validation ? validation.parse(data) : data;
 
-    console.log('params', actionParams);
     response = await action(...actionParams, parsedData);
   } catch (e) {
-    console.log('Save form data error:', e);
+    console.log('An error occured saving form data:', e);
 
     if (e instanceof ZodError) {
       return {
@@ -72,21 +56,4 @@ export async function saveFormData(
     status: "success",
     message: "Action done."
   };
-}
-
-export async function filterResource(pathname: string, searchParams: any, replace: any, data: any) {
-    console.log('data', data);
-    console.log(searchParams);
-
-    const params = new URLSearchParams(searchParams);
-    params.set('page', '0');
-    Object.keys(data).forEach(name => {
-      params.set(name, data[name]);
-    });
-    console.log(params.toString());
-    console.log(pathname);
-    //return redirect(`${pathname}?${params.toString()}`);
-    const path = `${pathname}?${params.toString()}`;
-    replace(path);
-    //return { action: 'redirect', path };
 }

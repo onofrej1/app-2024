@@ -15,7 +15,7 @@ interface SelectOption {
 interface InputProps {
   label: string,
   name: string,
-  errors: FieldErrors<DefaultFormData>,
+  errors?: FieldErrors<DefaultFormData>,
   options: SelectOption[],
   value: string | number,
   onChange: (value: string) => void,
@@ -46,16 +46,16 @@ export default function FormSelect({
             {options && options?.map(option =>
               <SelectItem
                 key={option.value}
-                value={option.value.toString()}>{option.label} {name}</SelectItem>
+                value={option.value.toString()}>{option.label}</SelectItem>
             )}
           </SelectContent>
         </Select>
       </div>
-      <ErrorMessage
+      {errors && <ErrorMessage
         errors={errors}
         name={name}
         render={renderError}
-      />
+      />}
     </>
   )
 }

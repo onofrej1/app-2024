@@ -21,10 +21,9 @@ export type State =
   }
   | null;
 
-export async function saveFormData(
+export async function submitForm(
   fields: FormField[],
   formSchema: FormSchema,
-  //action: (data: any) => any,
   action: (...args : any[]) => any,
   actionParams: any,
   prevState: State | null,
@@ -32,7 +31,6 @@ export async function saveFormData(
 ): Promise<State> {
   let response;
   try {
-    console.log('submit');
     const data: { [key: string]: any } = {};
     fields.forEach((field) => {
       if (field.type === 'm2m') {
@@ -46,7 +44,7 @@ export async function saveFormData(
 
     response = await action(...actionParams, parsedData);
   } catch (e) {
-    console.log('Save form data error:', e);
+    console.log('An error occured saving form data:', e);
 
     if (e instanceof ZodError) {
       return {
@@ -74,23 +72,6 @@ export async function saveFormData(
     status: "success",
     message: "Action done."
   };
-}
-
-export async function filterResource(pathname: string, searchParams: any, data: any) {
-    "use server"
-    console.log('data', data);
-    console.log(searchParams);
-
-    const params = new URLSearchParams(searchParams);
-    params.set('page', '0');
-    Object.keys(data).forEach(name => {
-      params.set(name, data[name]);
-    });
-    console.log(params.toString());
-    console.log(pathname);
-    const path = `${pathname}?${params.toString()}`;
-
-    return { action: 'redirect', path };
 }
 
 export async function registerUser(data: any) {

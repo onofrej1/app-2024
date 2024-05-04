@@ -3,6 +3,7 @@ import { FormSchema } from "@/validation";
 import { registerUser } from "@/actions";
 import Form, { FormRenderFunc, FormState } from "@/components/form/form";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Register() {
   const fields = [
@@ -27,11 +28,19 @@ export default function Register() {
     </>*/
 
   return (
-    <Form
-      fields={fields}
-      formSchema={FormSchema.RegisterUser}
-      buttons={buttons}
-      action={registerUser}
-    />
+    <>
+      <Form
+        fields={fields}
+        formSchema={FormSchema.RegisterUser}
+        buttons={buttons}
+        action={registerUser}
+      />
+      <Card>
+        <CardContent>
+          aaaaa
+        </CardContent>
+      </Card>
+    </>
+
   );
 }
