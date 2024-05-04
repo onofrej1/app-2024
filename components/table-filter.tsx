@@ -34,17 +34,28 @@ export default function TableFilter() {
   const defaultData: Record<string, string | undefined> = {};
   filters.forEach(f => {
     defaultData[f.name] = searchParams.get(f.name)?.toString();
+    /*f['onChange'] = (submit: any) => {
+      console.log('change field');
+      filter(defaultData);
+    };*/
+    f['onChange'] = (values: any, setFocus: any, fieldName: any) => {
+      console.log('change field', fieldName);
+      filter(values, () => setFocus(fieldName));
+      
+    };
   })
 
   const render: FormRenderFunc = ({ fields, formState }) => {
     return (
       <div className="flex flex-row">
         {filters.map(f => <span key={f.name}>{fields[f.name]}</span>)}
+        
       </div>
     )
   };
 
-  const filter = (data: any) => {
+  const filter = (data: any, callback?: any) => {
+    console.log('filter');
     const params = new URLSearchParams(searchParams);
     params.set('page', '0');
     Object.keys(data).forEach(name => {
@@ -52,6 +63,10 @@ export default function TableFilter() {
     });
     const path = `${pathname}?${params.toString()}`;
     replace(path);
+    if (callback) {
+      console.log('callback');
+      callback();
+    }
   }
 
   return (

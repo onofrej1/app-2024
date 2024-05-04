@@ -18,6 +18,7 @@ interface FormField {
     type: string;
     resource?: PrismaModel;
     fk?: string;
+    onChange?: any;
     relation?: string;
     textField?: string;
 
@@ -56,6 +57,7 @@ interface DataFilter {
   type: string;
   label: string;
   options?: SelectOption[];
+  onChange?: any;
 }
 
 type Resource = {

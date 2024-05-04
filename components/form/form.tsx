@@ -47,7 +47,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
   
   const validation = rules[formSchema];
 
-  const { register, formState: { isValid, errors }, getValues, setError, control } = useForm({
+  const { register, formState: { isValid, errors }, getValues, setFocus, setError, control, handleSubmit } = useForm({
     mode: "onSubmit",
     resolver: zodResolver(validation),
     defaultValues: data,
@@ -88,6 +88,10 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
           errors={errors}
           type={field.type}
           register={register}
+          onChange={() => {
+            field.onChange(getValues(), setFocus, field.name);
+            //setFocus(field.name);
+          }}
         />
       </>
       }
@@ -162,10 +166,9 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
   if (render) {
     const renderContent = render({ fields: fieldsToRender, formState: { isValid, pending } });
     return (
-      <form action={formAction}>
+      <>
         {renderContent}
-        <button type="submit">Filter</button>
-      </form>
+      </>
     );
   }
 

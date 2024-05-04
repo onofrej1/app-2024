@@ -2,7 +2,8 @@ import { prismaQuery } from '@/lib/db'
 import TableUI, { TableData } from "@/components/table";
 import { resources } from "@/resources";
 import { redirect } from 'next/navigation';
-
+import TablePagination from "@/components/table-pagination";
+import TableFilter from "@/components/table-filter";
 import { faker } from '@faker-js/faker';
 
 interface ResourceProps {
@@ -71,6 +72,8 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   return (
     <>
+      <TablePagination totalRows={totalRows} />
+      <TableFilter />
       <TableUI
         headers={resource.list}
         totalRows={totalRows}

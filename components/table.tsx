@@ -9,8 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import TablePagination from "./table-pagination";
-import TableFilter from "./table-filter";
 
 export interface TableData {
   [key: string]: any;
@@ -41,8 +39,6 @@ export default function TableUI({ headers, data, totalRows, actions }: TableProp
     
   return (
     <>
-      <TablePagination totalRows={totalRows} />
-      <TableFilter />
       <Table>
         {/*<TableCaption>A list of entities.</TableCaption>*/}
         <TableHeader>

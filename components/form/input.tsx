@@ -8,30 +8,38 @@ import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { renderError } from './utils';
 
 interface InputProps {
-    label: string,
-    type: string,
-    name: string,
-    errors: FieldErrors<DefaultFormData>,
-    register: UseFormRegister<DefaultFormData>,
+  label: string,
+  type: string,
+  name: string,
+  onChange: any,
+  errors: FieldErrors<DefaultFormData>,
+  register: UseFormRegister<DefaultFormData>,
 }
 
-export default function FormInput({ label, name, type, errors, register }: InputProps) {
-    if (type === 'hidden') {
-        return <Input type={type || 'text'} {...register(name)} placeholder={label} />;
-    }
+export default function FormInput({ label, name, type, onChange, errors, register }: InputProps) {
+  if (type === 'hidden') {
+    return <Input type={type || 'text'} {...register(name)} placeholder={label} />;
+  }
 
-    return (
-        <>
-            <Label>{label}</Label>
-            <div className='pt-1'>
-                <Input type={type || 'text'} {...register(name)} placeholder={label} />
-            </div>
+  return (
+    <>
+      <Label>{label}</Label>
+      <div className='pt-1'>
+        <Input
+          key={name}
+          type={type || 'text'}
+          {...register(name, {
+            onChange: (e) => onChange(e)
+          })}
+          placeholder={label}
+        />
+      </div>
 
-            <ErrorMessage
-                errors={errors}
-                name={name}
-                render={renderError}
-            />
-        </>
-    )
+      <ErrorMessage
+        errors={errors}
+        name={name}
+        render={renderError}
+      />
+    </>
+  )
 }
