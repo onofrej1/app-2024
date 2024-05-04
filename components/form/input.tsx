@@ -8,7 +8,7 @@ import { FieldErrors, RegisterOptions, UseFormRegister } from 'react-hook-form';
 import { renderError } from './utils';
 
 interface InputProps {
-  label: string,
+  label?: string,
   type: string,
   name: string,
   onChange?: any,
@@ -18,17 +18,17 @@ interface InputProps {
 
 export default function FormInput({ label, name, type, onChange, errors, register }: InputProps) {
   if (type === 'hidden') {
-    return <Input type={type || 'text'} {...register(name)} placeholder={label} />;
+    return <Input type='hidden' {...register(name)} placeholder={label} />;
   }
 
   const registerOptions: RegisterOptions = {};
   if (onChange) {
-    registerOptions['onChange'] = onChange;
+    registerOptions['onChange'] = (e) => onChange(e.target.value);
   }
 
   return (
-    <>
-      <Label>{label}</Label>
+    <div>
+      {label && <Label>{label}</Label>}
       <div className='pt-1'>
         <Input
           key={name}
@@ -43,6 +43,6 @@ export default function FormInput({ label, name, type, onChange, errors, registe
         name={name}
         render={renderError}
       />
-    </>
+    </div>
   )
 }

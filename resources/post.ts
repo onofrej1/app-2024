@@ -16,7 +16,21 @@ const post: Resource = {
   //rules,
   filter: [
     { name: 'title', type: 'text', label: 'Title' },
-    { name: 'content', type: 'text', label: 'Content' },
+    //{ name: 'content', type: 'text', label: 'Content' },
+    { name: 'content', type: 'select', label: 'Content', options: [
+      {
+        label: 'All',
+        value: 'all'
+      },
+      {
+        label: 'first',
+        value: 'yyyyy'
+      },
+      {
+        label: 'sedond',
+        value: 'apud'
+      }
+    ]},
   ],
   form: [
     { name: 'title', type: 'text', label: 'Title' },

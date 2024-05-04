@@ -1,10 +1,9 @@
 import { prismaQuery } from '@/lib/db'
-import TableUI, { TableData } from "@/components/table";
+import Table, { TableData } from "@/components/table";
 import { resources } from "@/resources";
 import { redirect } from 'next/navigation';
 import TablePagination from "@/components/table-pagination";
 import TableFilter from "@/components/table-filter";
-import { faker } from '@faker-js/faker';
 
 interface ResourceProps {
   params: {
@@ -15,20 +14,6 @@ interface ResourceProps {
 
 export default async function Resource({ params, searchParams }: ResourceProps) {
   const { page, pageCount, ...where } = searchParams;
-
-  for (var _i = 0; _i < 1; _i++) {
-    const a = {
-      data: {
-        title: faker.lorem.word(),
-        content: faker.lorem.word(),
-        author: {
-          connect: { id: "clvbdkuqg0000jnn5ms9wk1aw" }
-        }
-
-      }
-    };
-    //await prismaQuery(PrismaModel.post, 'create', a);
-  }
 
   const resourceName = params.name;
   const resource = resources.find(r => r.resource === resourceName);
@@ -45,9 +30,10 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   const totalRows = await prismaQuery(resource.model, 'count', { where: whereQuery });
 
+  const skip = (Number(page) || 1) - 1;
   const args = {
     where: whereQuery,
-    skip: (Number(page) || 0) * (Number(pageCount) || 10),
+    skip: skip * (Number(pageCount) || 10),
     take: Number(pageCount) || 10,
     orderBy: [{ 'id': 'asc' }]
   };
@@ -72,13 +58,13 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   return (
     <>
-      <TablePagination totalRows={totalRows} />
       <TableFilter />
-      <TableUI
+      <Table
         headers={resource.list}
         totalRows={totalRows}
         data={data}
         actions={actions} />
+      <TablePagination totalRows={totalRows} />
     </>
   );
 }

@@ -47,7 +47,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
   
   const validation = rules[formSchema];
 
-  const { register, formState: { isValid, errors }, getValues, setFocus, setError, control, handleSubmit } = useForm({
+  const { register, formState: { isValid, errors }, setError, control } = useForm({
     mode: "onSubmit",
     resolver: zodResolver(validation),
     defaultValues: data,
@@ -80,7 +80,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
   //console.log(getValues());
 
   const renderField = (field: FormField) =>
-    <div key={field.name} className="mb-2">
+    <>
       {['text', 'number', 'email', 'hidden'].includes(field.type) && <>
         <FormInput
           label={field.label}
@@ -88,7 +88,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
           errors={errors}
           type={field.type}
           register={register}
-          onChange={(e: any) => field.onChange(getValues(), e)}
+          onChange={field.onChange}
         />
       </>
       }
@@ -105,7 +105,10 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
               name={name}
               errors={errors}
               checked={!!value}
-              onChange={onChange}
+              onChange={(value) => {
+                onChange(value);
+                field.onChange(value);
+              }}
             />
           )}
         />
@@ -125,7 +128,10 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
               name={name}
               errors={errors}
               value={value}
-              onChange={onChange}
+              onChange={(value) => {
+                onChange(value);
+                field.onChange(value);
+              }}
               options={field.options!}
             />
           )}
@@ -147,13 +153,13 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
               onChange={onChange}
               textField={field.textField!}
               options={field.options! as MultiSelectOption[]}
-              ref={ref}
+              //ref={ref}
             />
           )
           }
         />
       }
-    </div>
+    </>
 
   const fieldsToRender = fields.reduce((acc, field) => {
     acc[field.name] = renderField(field);
@@ -172,7 +178,7 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
   return (
     <>
       <form action={formAction}>
-        {fields.map(Field => renderField(Field))}
+        {fields.map(field => <div className="mb-3" key={field.name}>{renderField(field)}</div>)}
         {buttons?.length ? <div className='flex space-x-2'>
           {buttons.map((Button, index) => <Button
             key={index}

@@ -20,7 +20,7 @@ interface InputProps {
   value: string[] | number[],
   textField: string,
   onChange: any,
-  ref: any,
+  //ref: any,
 }
 
 export default function FormMultiSelect({
@@ -31,7 +31,7 @@ export default function FormMultiSelect({
   value,
   onChange,
   textField,
-  ref
+  //ref
 }: InputProps) {
 
   const selectValue = value && value.length > 0 ? value.map((v: any) => ({ value: Number(v.value || v.id), label: v.label || v[textField!] })) : null;
@@ -46,7 +46,7 @@ export default function FormMultiSelect({
           value={selectValue}
           isMulti={true}
           onChange={onChange}
-          ref={ref}
+          //ref={ref}
           instanceId={name}
           name={name}
           options={options}

@@ -35,7 +35,7 @@ interface TableProps {
   actions?: TableAction[];
 }
 
-export default function TableUI({ headers, data, totalRows, actions }: TableProps) {
+export default function TableComponent({ headers, data, totalRows, actions }: TableProps) {
     
   return (
     <>

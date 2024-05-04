@@ -1,9 +1,17 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebouncedCallback } from 'use-debounce';
 import FormSelect from "./form/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface TablePaginationProps {
   totalRows: number,
@@ -14,8 +22,8 @@ export default function TablePagination({ totalRows }: TablePaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const pageCount = searchParams.get('pageCount');
-  const page = Number(searchParams.get('page')) || 0;
+  const pageCount = searchParams.get('pageCount') || 10;
+  const page = Number(searchParams.get('page')) || 1;
 
   const goToPage = (page: number) => {
     const params = new URLSearchParams(searchParams);
@@ -25,7 +33,7 @@ export default function TablePagination({ totalRows }: TablePaginationProps) {
 
   const handlePageCount = useDebouncedCallback((pageCount) => {
     const params = new URLSearchParams(searchParams);
-    params.set('page', '0');
+    params.set('page', '1');
     if (pageCount) {
       params.set('pageCount', pageCount);
     } else {
@@ -34,33 +42,51 @@ export default function TablePagination({ totalRows }: TablePaginationProps) {
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 
-  const pageCountOptions = [
-    {
-      label: '10',
-      value: 10
-    },
-    {
-      label: '20',
-      value: 20
-    },
-    {
-      label: '50',
-      value: 50
-    }
-  ]
+  const pageCountOptions = [10, 20, 50].map(v => ({ label: v.toString(), value: v }));
+
+  const totalPages = Math.ceil(totalRows / Number(pageCount));
+  console.log(totalPages);
 
   return (
-    <>
-      <button onClick={() => goToPage(page + 1)}> Next Page </button>
-      <button onClick={() => goToPage(page - 1)}> Prev Page </button>
+    <div className="flex flex-row ga-2 items-center justify-center">
+      <Pagination className="w-auto mx-6">
+        <PaginationContent>
+          <PaginationItem>
+            {page === 1 ?
+              <PaginationPrevious className="text-gray-400 " />
+              : <PaginationPrevious href="#" onClick={() => goToPage(page - 1)} />}
+          </PaginationItem>
+          {page > 1 && <PaginationItem>
+            <PaginationLink>{page - 1}</PaginationLink>
+          </PaginationItem>}
+          <PaginationItem>
+            <PaginationLink isActive>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+          {page < totalPages && <PaginationItem>
+            <PaginationLink>{page + 1}</PaginationLink>
+          </PaginationItem>}
+          {page < totalPages && <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>}
+          <PaginationItem>
+            {page < totalPages ?
+              <PaginationNext href="#" onClick={() => goToPage(page + 1)} />
+              : <PaginationNext className="text-gray-400 " />}
 
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+
+      <span className="pr-2">Pages</span>
       <FormSelect
-        label="Pages"
         name="pageCount"
-        value={pageCount?.toString() || 10}
+        inline
+        value={pageCount?.toString()}
         onChange={handlePageCount}
         options={pageCountOptions}
       />
-    </>
+    </div>
   )
 }
