@@ -8,9 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { LucideIcon, Pencil, Trash2, ArrowDownUp, ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast, useToast } from "./ui/use-toast";
 
 type IconNames = 'edit' | 'delete';
 
@@ -28,13 +29,15 @@ export interface TableHeader {
   header: string;
 }
 
-export interface TableAction {
-  label: string;
-  icon?: IconNames;
-  action: (data: TableData) => void;
+interface TableActionResponse {
+  message: string;
+}
 
-  //color: ButtonProps['color'];
-  //type?: 'edit' | 'delete' | 'info';
+export interface TableAction {
+  label: string;  
+  action: (data: TableData) => Promise<TableActionResponse> | void;
+  icon?: IconNames;
+  variant?: ButtonProps['variant'];
 }
 
 interface TableProps {
@@ -60,6 +63,7 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
+  const { toast } = useToast();
 
   const sortTable = (column: string) => {
     const params = new URLSearchParams(searchParams);
@@ -109,10 +113,20 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
               <TableCell className="py-0">
                 <div className="flex flex-row gap-1">
                 {actions?.map((action) => {
-                  const Icon = Icons[action.icon]; // as Record<IconNames, LucideIcon>;
+                  const Icon = action.icon ? Icons[action.icon] : null;
                   return (
-                    <Button size={"sm"} onClick={() => action.action(row)} key={action.label} className="flex flex-row gap-2">
-                      {action.icon ? <Icon size={14} /> : null}
+                    <Button 
+                      size={"sm"}
+                      variant={action.variant || 'default'}
+                      onClick={async () => {
+                        const response = await action.action(row);
+                        if (response && response.message) {
+                          toast({ title: response.message });
+                        }
+                      }}
+                      key={action.label} 
+                      className="flex flex-row gap-2">
+                      {Icon && <Icon size={14} />}
                       {action.label}
                     </Button>
                   )

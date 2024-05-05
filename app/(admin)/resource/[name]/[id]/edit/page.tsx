@@ -60,7 +60,7 @@ export default async function EditResource({ params }: ResourceProps) {
     }
     await prismaQuery(resource.model, 'update', args);
 
-    return { status: 'success', action: 'redirect', actionParams: [`/resource/${resourceName}`] };
+    return { redirect: `/resource/${resourceName}` };
   }
 
   return (

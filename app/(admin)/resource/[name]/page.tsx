@@ -1,11 +1,12 @@
 import { prismaQuery } from '@/lib/db'
-import Table, { TableData } from "@/components/table";
+import Table, { TableAction, TableData } from "@/components/table";
 import { resources } from "@/resources";
 import { redirect } from 'next/navigation';
 import TablePagination from "@/components/table-pagination";
 import TableFilter from "@/components/table-filter";
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { revalidatePath } from 'next/cache';
 
 interface ResourceProps {
   params: {
@@ -19,6 +20,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   const resourceName = params.name;
   const resource = resources.find(r => r.resource === resourceName);
+  const resourcePath = `/resource/${resourceName}`;
   if (!resource) {
     throw new Error(`Resource ${resourceName} not found !`);
   }
@@ -43,28 +45,36 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
   };
   const data = await prismaQuery(resource.model, 'findMany', args);
 
-  const actions = [
+  const actions: TableAction[] = [
     {
       label: 'Edit',
-      icon: 'edit' as const,
+      icon: 'edit',
       action: async (data: TableData) => {
         "use server"
-        redirect(`/resource/${resourceName}/${data.id}/edit`);
+        redirect(`${resourcePath}/${data.id}/edit`);
       },
     },
     {
       label: 'Delete',
-      icon: 'delete' as const,
+      icon: 'delete',
+      variant: 'outline',
       action: async (data: TableData) => {
         "use server"
-        console.log(data);
+        const args = {
+          where: {
+            id: Number(data.id),
+          },
+        };
+        await prismaQuery(resource.model, 'delete', args);
+        revalidatePath(resourcePath);
+        return { message: 'Item successfully deleted.'};
       },
     }
   ]
 
   const createResource = async () => {
     "use server"    
-    redirect(`/resource/${resourceName}/create`);
+    redirect(`${resourcePath}/create`);
   };
 
   return (
@@ -72,17 +82,17 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
       <div className="flex flex-row items-end justify-between">
         <TableFilter />
         <form action={createResource}>
-          <Button type='submit' variant="default">
-            <Plus className="h-5 w-5" /> Add new
+          <Button variant="outline" type='submit'>
+            <Plus className="h-5 w-5" /> Add item
           </Button>
         </form>
       </div>
 
       <Table
         headers={resource.list}
-        totalRows={totalRows}
         data={data}
-        actions={actions} />
+        actions={actions}
+        totalRows={totalRows} />
       <TablePagination totalRows={totalRows} />
     </>
   );

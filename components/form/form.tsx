@@ -81,8 +81,8 @@ export default function Form({ fields, validation, data, useClient = false, acti
         title: state.status.toUpperCase(),
         description: state.message,
       });
-      if (state.action && state.action === 'redirect') {
-        replace.apply(null, [state.actionParams?.[0]]);
+      if (state.redirect) {
+        replace(state.redirect);
       }
     }
   }, [state, setError, toast, replace]);
@@ -117,7 +117,9 @@ export default function Form({ fields, validation, data, useClient = false, acti
               checked={!!value}
               onChange={(value) => {
                 onChange(value);
-                field.onChange(value);
+                if (field.onChange) {
+                  field.onChange(value);
+                }
               }}
             />
           )}
@@ -141,7 +143,9 @@ export default function Form({ fields, validation, data, useClient = false, acti
               className={field.className}
               onChange={(value) => {
                 onChange(value);
-                field.onChange(value);
+                if (field.onChange) {
+                  field.onChange(value);
+                }
               }}
               options={field.options!}
             />

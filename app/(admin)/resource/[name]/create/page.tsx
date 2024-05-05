@@ -48,7 +48,7 @@ export default async function CreateResource({ params }: ResourceProps) {
 
     await prismaQuery(resource.model, 'create', args);
 
-    return { action: 'redirect', path: `/resource/${resourceName}` };
+    return { redirect: `/resource/${resourceName}` };
   }
 
   return (

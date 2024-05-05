@@ -10,8 +10,7 @@ export type State =
   | {
     status: "success";
     message: string;
-    action?: string;
-    actionParams?: any[]
+    redirect?: string;    
   }
   | {
     status: "error";
@@ -55,10 +54,9 @@ export async function submitForm(
 
   if (response) {
     return {
-      status: response.status || "success",
-      message: response.message || "Done.",
-      action: response.action,
-      actionParams: response.actionParams
+      status: "success",
+      message: "Done.",
+      redirect: response.redirect      
     };
   }
 
