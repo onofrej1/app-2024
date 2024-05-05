@@ -60,7 +60,7 @@ export default function TableFilter() {
   return (
     <Form
       fields={filters}
-      formSchema={FormSchema.FilterResource}
+      validation={FormSchema.FilterResource}
       data={defaultData}
       render={render}
       useClient={true}

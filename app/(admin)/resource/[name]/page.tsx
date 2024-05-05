@@ -49,7 +49,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
       icon: 'edit' as const,
       action: async (data: TableData) => {
         "use server"
-        redirect(`/resource/${resourceName}/${data.id}/edit`)
+        redirect(`/resource/${resourceName}/${data.id}/edit`);
       },
     },
     {
@@ -57,18 +57,25 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
       icon: 'delete' as const,
       action: async (data: TableData) => {
         "use server"
-        console.log(data)
+        console.log(data);
       },
     }
   ]
+
+  const createResource = async () => {
+    "use server"    
+    redirect(`/resource/${resourceName}/create`);
+  };
 
   return (
     <>
       <div className="flex flex-row items-end justify-between">
         <TableFilter />
-        <Button variant="default">
-          <Plus className="h-5 w-5" /> Add new
-        </Button>
+        <form action={createResource}>
+          <Button type='submit' variant="default">
+            <Plus className="h-5 w-5" /> Add new
+          </Button>
+        </form>
       </div>
 
       <Table
