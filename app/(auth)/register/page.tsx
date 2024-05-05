@@ -31,7 +31,7 @@ export default function Register() {
     <>
       <Form
         fields={fields}
-        formSchema={FormSchema.RegisterUser}
+        validation={FormSchema.RegisterUser}
         buttons={buttons}
         action={registerUser}
       />

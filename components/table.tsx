@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { LucideIcon, Pencil } from "lucide-react";
+import { LucideIcon, Pencil, Trash2, ArrowDownUp, ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-type IconNames = 'pencil' | 'delete';
+type IconNames = 'edit' | 'delete';
 
 export const Icons: Record<IconNames, LucideIcon> = {
-  'pencil': Pencil,
-  'delete': Pencil,
+  'edit': Pencil,
+  'delete': Trash2,
 }
 
 export interface TableData {
@@ -44,6 +44,18 @@ interface TableProps {
   actions?: TableAction[];
 }
 
+const toggleSort = (direction: string | null) => {
+  if (!direction) return 'asc';
+  if (direction === 'asc') return 'desc';
+  if (direction === 'desc') return null;
+}
+
+const getSortIcon = (direction: string | null) => {
+  if (direction === 'asc') return ArrowUpWideNarrow;
+  if (direction === 'desc') return ArrowDownWideNarrow;
+  return ArrowDownUp;
+}
+
 export default function TableComponent({ headers, data, totalRows, actions }: TableProps) {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
@@ -51,10 +63,24 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
 
   const sortTable = (column: string) => {
     const params = new URLSearchParams(searchParams);
+    const currSortBy = params.get('sortBy');
+    const currDirection = params.get('sortDir');
     params.set('page', '1');
-    params.set('sortBy', column);
+
+    const dir = currSortBy === column ? toggleSort(currDirection) : 'asc';
+    if (dir) {
+      params.set('sortBy', column);
+      params.set('sortDir', dir);
+    } else {
+      params.delete('sortBy');
+      params.delete('sortDir');
+    }
+
     replace(`${pathname}?${params.toString()}`);
   };
+
+  const Icon = getSortIcon(searchParams.get('sortDir'));
+  const sortBy = searchParams.get('sortBy');
 
   return (
     <>
@@ -63,8 +89,11 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
         <TableHeader>
           <TableRow>
             {headers.map((header) => (
-              <TableHead  key={header.name} onClick={() => sortTable(header.name)}>
-                {header.header}
+              <TableHead key={header.name} onClick={() => sortTable(header.name)}>
+                <div className="table-header flex flex-row gap-2 items-center cursor-pointer">
+                  {header.header} {sortBy === header.name ? <Icon size={14} />
+                    : <ArrowDownUp className="sort-icon" size={14} />}
+                </div>
               </TableHead>
             ))}
           </TableRow>
@@ -77,16 +106,18 @@ export default function TableComponent({ headers, data, totalRows, actions }: Ta
                   {row[header.name]}
                 </TableCell>
               ))}
-              <TableCell className="flex flex-row gap-1 justify-end">
+              <TableCell className="py-0">
+                <div className="flex flex-row gap-1">
                 {actions?.map((action) => {
                   const Icon = Icons[action.icon]; // as Record<IconNames, LucideIcon>;
                   return (
-                    <Button onClick={() => action.action(row)} key={action.label} className="flex flex-row gap-2">
-                      {action.icon ? <Icon size={14} /> : null} 
+                    <Button size={"sm"} onClick={() => action.action(row)} key={action.label} className="flex flex-row gap-2">
+                      {action.icon ? <Icon size={14} /> : null}
                       {action.label}
                     </Button>
                   )
                 })}
+                </div>
               </TableCell>
             </TableRow>
           ))}

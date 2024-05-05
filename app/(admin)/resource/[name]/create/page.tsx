@@ -60,7 +60,7 @@ export default async function CreateResource({ params }: ResourceProps) {
         <CardContent>
           <Form
             fields={resource.form}
-            formSchema={resource.rules}
+            validation={resource.rules}
             data={{}}
             action={onSave}
           />

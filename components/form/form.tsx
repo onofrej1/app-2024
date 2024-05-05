@@ -15,6 +15,8 @@ import FormInput from './input';
 import FormSelect from './select';
 import FormMultiSelect from './multi-select';
 import FormCheckbox from './checkbox';
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from 'next/navigation';
 
 export interface DefaultFormData {
   [key: string]: any;
@@ -34,7 +36,7 @@ export type FormRenderFunc = (props: { fields: Record<string, JSX.Element>, form
 
 interface FormProps {
   fields: FormField[];
-  formSchema: FormSchema,
+  validation: FormSchema,
   data?: DefaultFormData;
   useClient?: boolean,
   action: (...args: any[]) => any,
@@ -43,18 +45,20 @@ interface FormProps {
   render?: FormRenderFunc,
 }
 
-export default function Form({ fields, formSchema, data, useClient = false, action, actionParams = [], buttons, render }: FormProps) {
-  
-  const validation = rules[formSchema];
+export default function Form({ fields, validation, data, useClient = false, action, actionParams = [], buttons, render }: FormProps) {
+  const { toast } = useToast();
+  const { replace } = useRouter();
+
+  const validationRules = rules[validation];
 
   const { register, formState: { isValid, errors }, setError, control } = useForm({
     mode: "onSubmit",
-    resolver: zodResolver(validation),
+    resolver: zodResolver(validationRules),
     defaultValues: data,
   });
 
   const submitHandler = useClient ? submitFormClient : submitForm;
-  const submit = submitHandler.bind(null, fields, formSchema, action, actionParams);
+  const submit = submitHandler.bind(null, fields, validation, action, actionParams);
   const [state, formAction] = useFormState<State, FormData>(submit, null);
   const { pending } = useFormStatus();
 
@@ -73,9 +77,15 @@ export default function Form({ fields, formSchema, data, useClient = false, acti
       console.log(state.message);
     }
     if (state.status === "success") {
-      console.log(state.message);
+      toast({
+        title: state.status.toUpperCase(),
+        description: state.message,
+      });
+      if (state.action && state.action === 'redirect') {
+        replace.apply(null, [state.actionParams?.[0]]);
+      }
     }
-  }, [state, setError]);
+  }, [state, setError, toast, replace]);
 
   //console.log(getValues());
 

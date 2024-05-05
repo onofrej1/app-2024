@@ -60,7 +60,7 @@ export default async function EditResource({ params }: ResourceProps) {
     }
     await prismaQuery(resource.model, 'update', args);
 
-    return { action: 'redirect', path: `/resource/${resourceName}` };
+    return { status: 'success', action: 'redirect', actionParams: [`/resource/${resourceName}`] };
   }
 
   return (
@@ -72,7 +72,7 @@ export default async function EditResource({ params }: ResourceProps) {
         <CardContent>
           <Form
             fields={form}
-            formSchema={resource.rules}
+            validation={resource.rules}
             data={data}
             action={onSave}
           />

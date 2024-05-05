@@ -4,12 +4,14 @@ import { FormField } from "@/resources/resources.types";
 import rules, { FormSchema } from "@/validation";
 import { ZodError } from "zod";
 import bcrypt from 'bcrypt';
-import { redirect } from 'next/navigation';
+import { parseValidationError } from "@/lib/utils";
 
 export type State =
   | {
     status: "success";
     message: string;
+    action?: string;
+    actionParams?: any[]
   }
   | {
     status: "error";
@@ -32,12 +34,8 @@ export async function submitForm(
   let response;
   try {
     const data: { [key: string]: any } = {};
-    fields.forEach((field) => {
-      if (field.type === 'm2m') {
-        data[field.name] = formData.getAll(field.name);
-      } else {
-        data[field.name] = formData.get(field.name);
-      }
+    fields.forEach((field) => {      
+        data[field.name] = field.type === 'm2m' ? formData.getAll(field.name) : formData.get(field.name);      
     });
     const validation = rules[formSchema];
     const parsedData = validation ? validation.parse(data) : data;
@@ -47,14 +45,7 @@ export async function submitForm(
     console.log('An error occured saving form data:', e);
 
     if (e instanceof ZodError) {
-      return {
-        status: "error",
-        message: "Invalid form data.",
-        errors: e.issues.map((issue) => ({
-          path: issue.path.join("."),
-          message: issue.message,
-        })),
-      };
+      return parseValidationError(e);
     }
     return {
       status: "error",
@@ -63,14 +54,17 @@ export async function submitForm(
   }
 
   if (response) {
-    if (response.action === 'redirect') {
-      return redirect(response.path);
-    }
+    return {
+      status: response.status || "success",
+      message: response.message || "Done.",
+      action: response.action,
+      actionParams: response.actionParams
+    };
   }
 
   return {
     status: "success",
-    message: "Action done."
+    message: "Done.",
   };
 }
 
@@ -101,5 +95,5 @@ export async function registerUser(data: any) {
   } catch (e) {
     console.log(e);
   }
-  return { action: 'redirect', path: `test`};
+  return { action: 'redirect', path: '/profile'};
 }

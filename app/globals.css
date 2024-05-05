@@ -74,3 +74,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.sort-icon {
+  display: none;
+}
+
+.table-header:hover .sort-icon {
+  display: block;
+}

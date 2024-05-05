@@ -4,7 +4,8 @@ import { resources } from "@/resources";
 import { redirect } from 'next/navigation';
 import TablePagination from "@/components/table-pagination";
 import TableFilter from "@/components/table-filter";
-import { Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 interface ResourceProps {
   params: {
@@ -14,7 +15,7 @@ interface ResourceProps {
 }
 
 export default async function Resource({ params, searchParams }: ResourceProps) {
-  const { page, pageCount, sortBy = 'id', ...where } = searchParams;
+  const { page, pageCount, sortBy = 'id', sortDir = 'asc', ...where } = searchParams;
 
   const resourceName = params.name;
   const resource = resources.find(r => r.resource === resourceName);
@@ -33,19 +34,19 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
-  
+
   const args = {
     where: whereQuery,
     skip: skip * take,
     take: take,
-    orderBy: [{ [sortBy]: 'asc' }]
+    orderBy: [{ [sortBy]: sortDir }]
   };
   const data = await prismaQuery(resource.model, 'findMany', args);
 
   const actions = [
     {
       label: 'Edit',
-      icon: 'pencil' as const,
+      icon: 'edit' as const,
       action: async (data: TableData) => {
         "use server"
         redirect(`/resource/${resourceName}/${data.id}/edit`)
@@ -53,7 +54,7 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
     },
     {
       label: 'Delete',
-      //icon: 'pencil',
+      icon: 'delete' as const,
       action: async (data: TableData) => {
         "use server"
         console.log(data)
@@ -63,7 +64,13 @@ export default async function Resource({ params, searchParams }: ResourceProps) 
 
   return (
     <>
-      <TableFilter />
+      <div className="flex flex-row items-end justify-between">
+        <TableFilter />
+        <Button variant="default">
+          <Plus className="h-5 w-5" /> Add new
+        </Button>
+      </div>
+
       <Table
         headers={resource.list}
         totalRows={totalRows}
